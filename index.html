@@ -7,12 +7,12 @@
 <title>Aha · 一声就记下</title>
 <link rel="icon" href="assets/logo.png">
 <style>
-/* ============ v0.2 · 白底 Apple 风 + Dot 式便利贴 ============ */
+/* ============ v0.3 · 仿真便利贴 + 叠放首页 + 亮色（Apple/Google 感） ============ */
 :root{
   --bg:#FFFFFF; --ink:#111114; --ink-2:#6B6B72; --ink-3:#AEAEB6;
   --fill:#F2F2F5; --line:#ECECF0;
-  --b0:#B9D9F2; --b1:#BCE8C9; --b2:#E3D6F7; --b3:#F5D3E0;   /* 便利贴描边轮换 */
-  --green:#34C759; --red:#FF3B30;
+  --blue:#0A84FF; --blue-deep:#0066D6; --blue-soft:#EAF2FF;
+  --green:#34C759; --orange:#FF9F0A; --red:#FF3B30;
   --shadow:0 4px 24px rgba(0,0,0,.06);
   --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Helvetica Neue",sans-serif;
   --serif:"Songti SC","STSong","Noto Serif SC",serif;
@@ -29,70 +29,63 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 .view::-webkit-scrollbar{display:none}
 .view.active{display:block}
 
-/* ============ 顶部（☰ 间接进灵感录） ============ */
+/* ============ 顶部 + 灵感录引导入口 ============ */
 .topbar{display:flex;align-items:center;padding:16px 18px 4px}
-.iconbtn{width:42px;height:42px;border-radius:50%;background:var(--fill);border:none;font-size:17px;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative}
-.iconbtn .cnt{position:absolute;top:-3px;right:-3px;background:var(--ink);color:#fff;font-size:9.5px;min-width:17px;height:17px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.libentry{display:flex;align-items:center;gap:7px;background:var(--blue-soft);border:none;border-radius:999px;padding:10px 16px;font-size:13.5px;color:var(--blue);font-weight:600;cursor:pointer}
+.libentry .cnt{background:var(--blue);color:#fff;font-size:10.5px;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px;font-weight:700}
 .topbar .sp{flex:1}
 .topbar .logo{height:30px;border-radius:8px}
+.iconbtn{width:42px;height:42px;border-radius:50%;background:var(--fill);border:none;font-size:17px;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center}
 
 /* 问候区 */
-.greet{padding:34px 26px 8px;text-align:center}
+.greet{padding:26px 26px 4px;text-align:center}
 .greet .g-main{font-size:24px;font-weight:700;letter-spacing:.5px}
 .greet .g-main::before{content:"“"}.greet .g-main::after{content:"”"}
 .greet .g-sub{margin-top:8px;font-size:13px;color:var(--ink-3)}
 
-/* ============ 便利贴卡（Dot 式：白卡 + 大引号 + 黑胶囊播放键） ============ */
-.note{margin:16px 18px 4px;background:#fff;border:1.5px solid var(--b0);border-radius:22px;box-shadow:var(--shadow);padding:18px 18px 12px;position:relative;animation:drop .45s cubic-bezier(.2,.9,.3,1.15);user-select:none}
-.note.b0{border-color:var(--b0)}.note.b1{border-color:var(--b1)}.note.b2{border-color:var(--b2)}.note.b3{border-color:var(--b3)}
+/* ============ 首页便利贴叠放堆（只露最新一张） ============ */
+.stack{position:relative;margin:26px 26px 4px;padding-top:26px;aspect-ratio:1/1;cursor:pointer}
+.stk{position:absolute;inset:26px 0 0 0;background-size:100% 100%;background-repeat:no-repeat}
+.stk.back1{transform:rotate(-4deg) scale(.93) translateY(-16px);z-index:1;opacity:.96}
+.stk.back2{transform:rotate(3.5deg) scale(.87) translateY(-26px);z-index:0;opacity:.9}
+.stk.front{z-index:2;animation:drop .45s cubic-bezier(.2,.9,.3,1.15)}
 @keyframes drop{from{transform:translateY(-16px) scale(.97);opacity:0}to{transform:none;opacity:1}}
-.qm{font-family:var(--serif);font-size:44px;line-height:1;color:#D8D8DE;position:absolute;pointer-events:none}
-.qm.tl{top:8px;left:14px}.qm.br{bottom:44px;right:14px}
-.oneliner{font-size:19px;font-weight:600;line-height:1.55;padding:22px 10px 6px;word-break:break-word}
-.oneliner.loading{color:var(--ink-3);font-weight:400}
+.stk .inner{position:absolute;left:14%;right:16%;top:16%;bottom:20%;display:flex;flex-direction:column;overflow:hidden}
+.qm{font-family:var(--serif);font-size:40px;line-height:.8;color:rgba(0,0,0,.14);pointer-events:none}
+.oneliner{font-size:20px;font-weight:700;line-height:1.5;margin-top:6px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.oneliner.loading{color:var(--ink-3);font-weight:400;font-size:16px}
+.stk .peek{font-size:15px;font-weight:600;line-height:1.5;color:rgba(0,0,0,.55);padding:14% 16% 0 14%;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 /* 黑胶囊播放键 */
-.playpill{display:inline-flex;align-items:center;gap:7px;background:var(--ink);color:#fff;border:none;border-radius:999px;padding:9px 18px;font-size:13px;cursor:pointer;margin:10px 0 4px 10px;font-family:var(--sans)}
-.playpill .pp-ic{font-size:10px}
-.playpill.playing{background:#000}
+.playpill{display:inline-flex;align-items:center;gap:7px;background:var(--ink);color:#fff;border:none;border-radius:999px;padding:8px 16px;font-size:12px;cursor:pointer;margin-top:10px;width:fit-content;font-family:var(--sans)}
+.playpill .pp-ic{font-size:9px}
+.pp-bars{display:inline-flex;align-items:center;gap:2px;height:11px}
+.pp-bars i{width:2.5px;background:#fff;border-radius:2px;height:4px}
 .playpill.playing .pp-bars i{animation:ppb .7s ease-in-out infinite alternate}
-.pp-bars{display:inline-flex;align-items:center;gap:2px;height:12px}
-.pp-bars i{width:2.5px;background:#fff;border-radius:2px;height:5px}
-@keyframes ppb{from{transform:scaleY(.4)}to{transform:scaleY(1.6)}}
-.note img.n-img{width:calc(100% - 20px);margin:8px 10px 2px;border-radius:14px;display:block}
-/* 转写中骨架 */
-.skel{padding:22px 10px 6px}
-.skel i{display:block;height:14px;border-radius:7px;background:linear-gradient(90deg,#F0F0F3 25%,#E4E4EA 50%,#F0F0F3 75%);background-size:200% 100%;animation:shim 1.2s infinite;margin-bottom:10px}
-.skel .sk-t{font-size:11px;color:var(--ink-3)}
+@keyframes ppb{from{transform:scaleY(.4)}to{transform:scaleY(1.7)}}
+/* 摘要节选 + 渐隐遮罩（吸引点击） */
+.excerpt{margin-top:10px;font-size:13px;line-height:1.75;color:rgba(0,0,0,.62);max-height:92px;overflow:hidden;
+  -webkit-mask-image:linear-gradient(#000 35%,transparent 98%);mask-image:linear-gradient(#000 35%,transparent 98%)}
+.stk .foot{position:absolute;left:14%;right:16%;bottom:9%;display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(0,0,0,.45)}
+.kbadge{border-radius:8px;padding:2.5px 9px;font-size:10.5px;font-weight:600;color:#fff}
+.kbadge.idea{background:var(--orange)}.kbadge.todo{background:var(--green)}
+/* 骨架 */
+.skel i{display:block;height:14px;border-radius:7px;background:linear-gradient(90deg,rgba(0,0,0,.05) 25%,rgba(0,0,0,.11) 50%,rgba(0,0,0,.05) 75%);background-size:200% 100%;animation:shim 1.2s infinite;margin-bottom:10px}
+.skel .sk-t{font-size:11px;color:rgba(0,0,0,.4)}
 @keyframes shim{from{background-position:200% 0}to{background-position:-200% 0}}
-/* 分段摘要区 */
-.sum{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px}
-.sum-head{display:flex;align-items:center;font-size:11.5px;color:var(--ink-3);padding:0 2px 6px}
-.sum-head .swap{margin-left:auto;background:var(--fill);border:none;border-radius:999px;padding:5px 12px;font-size:11px;color:var(--ink-2);cursor:pointer}
-.sum-body{font-size:14px;line-height:1.85;color:#3A3A40;padding:0 2px 2px;white-space:pre-wrap;word-break:break-word}
-.sum-body .seg{display:block;opacity:0;transform:translateY(6px);animation:segIn .4s ease forwards;margin-bottom:6px}
-.sum-body .seg .n{color:var(--ink-3);margin-right:6px;font-size:12px}
-@keyframes segIn{to{opacity:1;transform:none}}
-.sum-body .cursor{display:inline-block;width:8px;height:16px;background:var(--ink);border-radius:2px;vertical-align:-2px;animation:blink .7s steps(2) infinite}
-@keyframes blink{50%{opacity:0}}
-/* 候选标签：点击亮起 */
-.tagrow{display:flex;flex-wrap:wrap;gap:8px;padding:10px 2px 2px}
-.kw{border:1px solid #E2E2E8;background:#fff;color:var(--ink-2);border-radius:999px;padding:6px 13px;font-size:12px;cursor:pointer;transition:all .18s}
-.kw.lit{background:var(--ink);color:#fff;border-color:var(--ink);transform:scale(1.04)}
-.kw.hint{border-style:dashed;color:var(--ink-3)}
-/* 卡脚 */
-.foot{display:flex;align-items:center;gap:8px;padding:10px 2px 0;font-size:11px;color:var(--ink-3)}
-.foot .kbadge{background:var(--fill);border-radius:8px;padding:2px 8px;font-size:10.5px;color:var(--ink-2)}
-.foot .share{margin-left:auto;background:none;border:none;font-size:14px;color:var(--ink-2);cursor:pointer;padding:4px}
+/* 引导去灵感录 */
+.golib{display:flex;align-items:center;justify-content:center;gap:6px;margin:18px auto 6px;background:none;border:none;color:var(--blue);font-size:13.5px;font-weight:600;cursor:pointer;padding:10px}
+.golib .arrow{animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
 
 /* 空状态 */
 .empty{padding:50px 30px;text-align:center;color:var(--ink-3);font-size:13px;line-height:2}
 .empty img{width:120px;margin-bottom:6px}
 
-/* ============ 底部输入条（键盘图标 + 按住说话长条） ============ */
+/* ============ 底部输入条（亮蓝色主按钮） ============ */
 .inputbar{flex:none;display:flex;align-items:center;gap:12px;padding:12px 16px calc(14px + env(safe-area-inset-bottom));background:var(--bg)}
-.kbd{width:46px;height:46px;border-radius:50%;background:var(--fill);border:none;font-size:19px;color:var(--ink);cursor:pointer;flex:none;touch-action:none;user-select:none;-webkit-user-select:none}
-.talk{flex:1;height:52px;border-radius:999px;background:var(--fill);border:none;font-size:15.5px;color:var(--ink-2);cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;font-family:var(--sans);letter-spacing:1px;transition:all .15s}
-.talk.pressing{background:var(--ink);color:#fff}
+.kbd{width:46px;height:46px;border-radius:50%;background:var(--fill);border:none;font-size:18px;color:var(--ink);cursor:pointer;flex:none;touch-action:none;user-select:none;-webkit-user-select:none}
+.talk{flex:1;height:52px;border-radius:999px;background:var(--blue);border:none;font-size:15.5px;color:#fff;font-weight:600;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;font-family:var(--sans);letter-spacing:1px;transition:background .15s;box-shadow:0 6px 18px rgba(10,132,255,.28)}
+.talk.pressing{background:var(--blue-deep)}
 
 /* ============ 录音浮层：上滑选 Todo / 灵感 ============ */
 .rec-ov{position:absolute;inset:0;background:rgba(15,15,20,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:none;z-index:40}
@@ -103,30 +96,64 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 .cats.armed-zone{opacity:1}
 .cat{display:flex;flex-direction:column;align-items:center;gap:7px;font-size:11.5px;color:var(--ink-2)}
 .cat .c-ic{width:62px;height:62px;border-radius:50%;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:24px;transition:all .15s;border:2px solid transparent}
-.cat.armed .c-ic{background:var(--ink);color:#fff;transform:scale(1.14)}
+#catTodo.armed .c-ic{background:var(--green);color:#fff;transform:scale(1.14)}
+#catIdea.armed .c-ic{background:var(--orange);color:#fff;transform:scale(1.14)}
 .cat.armed{color:var(--ink);font-weight:600}
 .rec-timer{font-size:32px;font-weight:300;font-variant-numeric:tabular-nums;margin-top:8px}
 .rec-timer.warn{color:var(--red);font-weight:600}
 .rec-wave{display:flex;align-items:center;justify-content:center;gap:3px;height:48px;margin:8px 0 4px}
-.rec-wave i{width:4px;border-radius:3px;background:var(--ink);transition:height .08s}
+.rec-wave i{width:4px;border-radius:3px;background:var(--blue);transition:height .08s}
 .rec-hint{font-size:12.5px;color:var(--ink-2);min-height:20px}
 .rec-cancel{margin:10px auto 0;width:58px;height:58px;border-radius:50%;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--ink-2);transition:all .15s}
 .rec-cancel.armed{background:var(--red);color:#fff;transform:scale(1.15)}
 .rec-sub{font-size:10.5px;color:var(--ink-3);margin-top:8px}
 
-/* ============ 全屏浮层：打字 / 图片附言 / 分享页 ============ */
-.overlay{position:absolute;inset:0;background:var(--bg);z-index:50;display:none;flex-direction:column}
+/* ============ 便利贴详情页 / 录后确认页 ============ */
+.noteview{position:absolute;inset:0;background:var(--bg);z-index:50;display:none;flex-direction:column}
+.noteview.on{display:flex}
+.nv-bar{display:flex;align-items:center;padding:14px 16px}
+.nv-bar button{background:none;border:none;font-size:15px;cursor:pointer;color:var(--ink-2);padding:6px}
+.nv-bar .nv-title{font-size:14px;font-weight:600;color:var(--ink);margin-left:8px}
+.nv-scroll{flex:1;overflow-y:auto;padding:6px 20px 20px;scrollbar-width:none}
+.nv-scroll::-webkit-scrollbar{display:none}
+.nv-sticky{position:relative;width:100%;aspect-ratio:1/1;background-size:100% 100%;background-repeat:no-repeat;animation:drop .4s ease}
+.nv-sticky .inner{position:absolute;left:14%;right:16%;top:16%;bottom:20%;display:flex;flex-direction:column;overflow:hidden}
+.nv-sticky .oneliner{font-size:21px;-webkit-line-clamp:4}
+.nv-sticky img.nv-img{width:100%;border-radius:10px;margin-top:8px}
+/* 摘要卡 */
+.sumcard{margin-top:6px;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:14px 16px}
+.sum-head{display:flex;align-items:center;font-size:12px;color:var(--ink-3);padding-bottom:8px}
+.sum-head .swap{margin-left:auto;background:var(--blue-soft);border:none;border-radius:999px;padding:5px 13px;font-size:11.5px;color:var(--blue);cursor:pointer;font-weight:600}
+.sum-body{font-size:14.5px;line-height:1.85;color:#3A3A40;white-space:pre-wrap;word-break:break-word}
+.sum-body .seg{display:block;opacity:0;transform:translateY(6px);animation:segIn .4s ease forwards;margin-bottom:7px}
+.sum-body .seg .n{color:var(--blue);margin-right:6px;font-size:12px;font-weight:600}
+@keyframes segIn{to{opacity:1;transform:none}}
+.sum-body .cursor{display:inline-block;width:8px;height:16px;background:var(--blue);border-radius:2px;vertical-align:-2px;animation:blink .7s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+/* 候选标签：点击亮起（亮蓝色） */
+.tagrow{display:flex;flex-wrap:wrap;gap:8px;padding:14px 2px 4px}
+.kw{border:1.5px solid #E2E2E8;background:#fff;color:var(--ink-2);border-radius:999px;padding:7px 14px;font-size:12.5px;cursor:pointer;transition:all .18s}
+.kw.lit{background:var(--blue);color:#fff;border-color:var(--blue);transform:scale(1.05);box-shadow:0 3px 10px rgba(10,132,255,.3)}
+.kw-hint{font-size:11.5px;color:var(--ink-3);width:100%}
+/* 确认页底部大按钮 */
+.nv-done{flex:none;margin:0 20px calc(18px + env(safe-area-inset-bottom));height:52px;border:none;border-radius:999px;background:var(--blue);color:#fff;font-size:15.5px;font-weight:600;cursor:pointer;font-family:var(--sans);box-shadow:0 6px 18px rgba(10,132,255,.3);display:none}
+.nv-done.on{display:block}
+.nv-meta{flex:none;text-align:center;font-size:11.5px;color:var(--ink-3);padding-bottom:calc(16px + env(safe-area-inset-bottom));display:none}
+.nv-meta.on{display:block}
+
+/* ============ 打字 / 图片 ============ */
+.overlay{position:absolute;inset:0;background:var(--bg);z-index:55;display:none;flex-direction:column}
 .overlay.on{display:flex}
 .ov-bar{display:flex;align-items:center;padding:14px 16px}
 .ov-bar button{background:none;border:none;font-size:15px;cursor:pointer;color:var(--ink-2);padding:6px}
-.ov-bar .save{margin-left:auto;color:var(--ink);font-weight:600}
+.ov-bar .save{margin-left:auto;color:var(--blue);font-weight:600}
 .ov-bar .draft{font-size:11px;color:var(--ink-3);margin-left:10px}
 .overlay textarea{flex:1;border:none;outline:none;resize:none;background:transparent;color:var(--ink);font-size:17px;line-height:1.8;padding:14px 22px;font-family:var(--sans)}
 .imgcom .preview{flex:1;display:flex;align-items:center;justify-content:center;padding:16px;overflow:hidden}
 .imgcom .preview img{max-width:100%;max-height:100%;border-radius:16px;box-shadow:var(--shadow)}
 .imgcom textarea{flex:none;height:92px;margin:0 16px 16px;background:var(--fill);border-radius:14px;padding:14px 16px;font-size:15px}
 
-/* 分享页（灵感录 → 生成图片分享） */
+/* ============ 分享页 ============ */
 .share-ov{position:absolute;inset:0;background:rgba(15,15,20,.72);z-index:60;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:28px}
 .share-ov.on{display:flex}
 .share-ov .s-title{color:#fff;font-size:14px;letter-spacing:2px;opacity:.85}
@@ -141,8 +168,14 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 .lib-head .t{font-size:22px;font-weight:700;margin-left:12px}
 .pills{display:flex;gap:8px;padding:14px 18px 6px}
 .pill{border:none;background:var(--fill);color:var(--ink-2);border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer}
-.pill.on{background:var(--ink);color:#fff;font-weight:600}
-.pill .n{opacity:.6;font-size:11px;margin-left:3px}
+.pill.on{background:var(--blue);color:#fff;font-weight:600}
+.pill .n{opacity:.65;font-size:11px;margin-left:3px}
+.lib-item{display:flex;align-items:center;gap:13px;margin:10px 18px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px 14px;box-shadow:var(--shadow);cursor:pointer;animation:drop .35s ease}
+.lib-item .thumb{width:52px;height:52px;background-size:100% 100%;flex:none;display:flex;align-items:center;justify-content:center}
+.lib-item .li-main{flex:1;min-width:0}
+.lib-item .li-one{font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lib-item .li-meta{margin-top:5px;display:flex;align-items:center;gap:7px;font-size:11px;color:var(--ink-3)}
+.lib-item .li-share{background:var(--blue-soft);border:none;border-radius:50%;width:34px;height:34px;color:var(--blue);font-size:14px;cursor:pointer;flex:none}
 .lib-reset{display:block;margin:26px auto 30px;background:none;border:none;color:var(--ink-3);font-size:11.5px;cursor:pointer}
 
 /* Toast */
@@ -153,10 +186,10 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 <body>
 <div class="phone" id="phone">
 
-  <!-- ===== 灵感流（开屏首页） ===== -->
+  <!-- ===== 灵感流（开屏首页：只露最新一张便利贴） ===== -->
   <div class="view active" id="view-feed">
     <div class="topbar">
-      <button class="iconbtn" id="menuBtn" onclick="switchTab('lib')">☰<span class="cnt" id="noteCnt">0</span></button>
+      <button class="libentry" onclick="switchTab('lib')">📒 灵感录<span class="cnt" id="noteCnt">0</span></button>
       <div class="sp"></div>
       <img class="logo" src="assets/logo.png" alt="Aha">
       <div class="sp"></div>
@@ -166,7 +199,8 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
       <div class="g-main" id="greetMain">下午好！</div>
       <div class="g-sub" id="greetSub">一声就记下</div>
     </div>
-    <div id="feedList"></div>
+    <div id="stackSlot"></div>
+    <div style="text-align:center"><button class="golib" id="golibBtn" onclick="switchTab('lib')">查看全部 <span id="golibCnt"></span> 条随记 <span class="arrow">→</span></button></div>
   </div>
 
   <!-- ===== 灵感录 ===== -->
@@ -205,6 +239,24 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
     </div>
   </div>
 
+  <!-- ===== 便利贴详情页 / 录后确认页 ===== -->
+  <div class="noteview" id="noteview">
+    <div class="nv-bar">
+      <button onclick="closeNoteView()">‹ 返回</button>
+      <span class="nv-title" id="nvTitle"></span>
+    </div>
+    <div class="nv-scroll">
+      <div class="nv-sticky" id="nvSticky"><div class="inner" id="nvInner"></div></div>
+      <div class="sumcard" id="nvSumcard">
+        <div class="sum-head"><span id="nvSumLabel">分段摘要</span><button class="swap" id="nvSwap">⇄ 原文</button></div>
+        <div class="sum-body" id="nvSumBody"></div>
+      </div>
+      <div class="tagrow" id="nvTags"></div>
+    </div>
+    <button class="nv-done" id="nvDone">完成，记下来 ✓</button>
+    <div class="nv-meta" id="nvMeta"></div>
+  </div>
+
   <!-- ===== 打字 ===== -->
   <div class="overlay" id="editor">
     <div class="ov-bar">
@@ -241,28 +293,22 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 
 <script>
 /* ============================================================
-   Aha 可交互原型 v0.2
-   白底 Apple 风 · Dot 式便利贴 · 上滑选 Todo/灵感 · LLM 摘要+关键词
+   Aha 可交互原型 v0.3
+   仿真便利贴 · 首页叠放只露最新 · 录后确认页 · 详情页摘要/原文 · 亮色
    ============================================================ */
 "use strict";
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const LS_KEY="aha_v2";
 const DAY=86400000;
+const NOTE_SRCS=["assets/note-cream.png","assets/note-yellow.png","assets/note-blue.png","assets/note-pink.png"];
+const NOTE_IMGS=NOTE_SRCS.map(s=>{const i=new Image();i.src=s;return i});
 
 /* ============================================================
    ★ LLM 接入配置（提示词待用户提供后填入 prompts 即可生效）
-   - endpoint 留空 → 自动走 Mock，全链路可先跑通
-   - 填了 endpoint+apiKey → 走真实 OpenAI 兼容接口
    ============================================================ */
 const LLM={
-  endpoint:"",            // 例如 https://api.xxx.com/v1/chat/completions
-  apiKey:"",
-  model:"",
-  prompts:{
-    oneLiner:"",          // TODO(用户): 一句话概括提示词。变量 {{text}}
-    segments:"",          // TODO(用户): 分段摘要提示词。变量 {{text}}
-    keywords:""           // TODO(用户): 关键词/标签提取提示词。变量 {{text}}
-  }
+  endpoint:"", apiKey:"", model:"",
+  prompts:{ oneLiner:"", segments:"", keywords:"" }   // TODO(用户): 变量 {{text}}
 };
 async function llm(task,text){
   if(LLM.endpoint&&LLM.apiKey&&LLM.prompts[task]){
@@ -275,7 +321,7 @@ async function llm(task,text){
       const out=(d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||"";
       const parsed=parseLLM(task,out);
       if(parsed)return parsed;
-    }catch(e){/* 静默降级 Mock */}
+    }catch(e){}
   }
   return mockLLM(task,text);
 }
@@ -288,7 +334,7 @@ function parseLLM(task,out){
   if(task==="oneLiner"&&out.trim())return out.trim().split("\n")[0].slice(0,40);
   return null;
 }
-/* ---- Mock 实现（真实提示词到位前的演示数据） ---- */
+/* ---- Mock（真实提示词到位前的演示实现） ---- */
 const KW_RULES=[
   [/产品|功能|用户|体验|设计|原型|需求/,"产品"],[/会议|上线|方案|汇报|项目|老板|客户/,"工作"],
   [/书|课程|论文|学会|读完|考试/,"学习"],[/累|烦|开心|焦虑|难过|失眠|压力|心情/,"情绪"],
@@ -304,7 +350,7 @@ function mockLLM(task,text){
   if(task==="segments"){
     const ss=(text||"").split(/(?<=[。！？!?])/).map(x=>x.trim()).filter(Boolean);
     if(ss.length<=1)return[text||"（无内容）"];
-    const segs=[];const per=Math.ceil(ss.length/3);
+    const segs=[],per=Math.ceil(ss.length/3);
     for(let i=0;i<ss.length;i+=per)segs.push(ss.slice(i,i+per).join(""));
     return segs.slice(0,3);
   }
@@ -354,69 +400,133 @@ function fmtTime(ts){
 function fmtDur(ms){const s=Math.round(ms/1000);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
 let toastT=null;
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("on"),2200)}
+function noteBg(n){return "url('"+NOTE_SRCS[n.border%4]+"')"}
 
-/* ============ 卡片渲染 ============ */
-function noteHTML(n,showShare){
-  const audio=n.assets.find(a=>a.kind==="audio");
-  const img=n.assets.find(a=>a.kind==="image");
-  let sticky="";
-  if(n.transcribing){
-    sticky='<div class="skel"><i style="width:88%"></i><i style="width:60%"></i><span class="sk-t">识别中…</span></div>';
-  }else{
-    sticky='<div class="qm tl">“</div>'+
-      '<div class="oneliner'+(n.oneLiner?"":" loading")+'">'+esc(n.oneLiner||"总结中…")+'</div>'+
-      '<div class="qm br">”</div>';
-    if(img)sticky+='<img class="n-img" src="'+img.localPath+'">';
-  }
-  if(audio){
-    sticky+='<button class="playpill" id="pp_'+n.id+'" onclick="playVoice(\''+n.id+'\')">'+
-      '<span class="pp-ic">▶</span><span class="pp-bars"><i></i><i></i><i></i><i></i></span>'+fmtDur(audio.durationMs||0)+'</button>';
-  }
-  /* 分段摘要 / 原文切换 */
-  let sum="";
-  if(!n.transcribing&&(n.segments&&n.segments.length||n.text)){
-    const body=n.showRaw?esc(n.text||""):
-      (n.segments||[]).map((s,i)=>'<span class="seg"><span class="n">'+"①②③"[i]+'</span>'+esc(s)+"</span>").join("");
-    sum='<div class="sum"><div class="sum-head">'+(n.showRaw?"原始原文":"分段摘要")+
-      '<button class="swap" onclick="toggleRaw(\''+n.id+'\')">⇄ '+(n.showRaw?"摘要":"原文")+'</button></div>'+
-      '<div class="sum-body" id="sum_'+n.id+'">'+body+'</div></div>';
-  }
-  /* 候选标签 */
-  let tags="";
-  if(n.candTags&&n.candTags.length){
-    tags='<div class="tagrow">'+n.candTags.map(t=>{
-      const lit=(n.pickedTags||[]).includes(t);
-      return '<button class="kw'+(lit?" lit":"")+(n.tagsDone?"":" hint")+'" onclick="pickKw(\''+n.id+'\',\''+esc(t)+'\')">'+esc(t)+'</button>';
-    }).join("")+'</div>';
-  }
-  const shareBtn=showShare?'<button class="share" onclick="openShare(\''+n.id+'\')">↗</button>':"";
-  return '<div class="note b'+n.border+'" data-id="'+n.id+'">'+sticky+sum+tags+
-    '<div class="foot"><span>'+fmtTime(n.createdAt)+'</span>'+
-    '<span class="kbadge">'+(n.kind==="todo"?"✅ Todo":"✨ 灵感")+'</span>'+shareBtn+'</div></div>';
-}
+/* ============ 首页：便利贴叠放堆（最新在前，后面叠放） ============ */
 function renderFeed(){
-  const list=$("#feedList");
+  const slot=$("#stackSlot");
   const notes=[...S.notes].sort((a,b)=>b.createdAt-a.createdAt);
-  list.innerHTML=notes.length?notes.map(n=>noteHTML(n,false)).join(""):
-    '<div class="empty"><img src="assets/empty.png"><br>还没有随记<br>按住下面「按住说话」，啊一声试试</div>';
   $("#noteCnt").textContent=S.notes.length;
-  bindLongPress(list);
+  $("#golibCnt").textContent=S.notes.length;
+  if(!notes.length){
+    slot.innerHTML='<div class="empty"><img src="assets/empty.png"><br>还没有随记<br>按住下面「按住说话」，啊一声试试</div>';
+    $("#golibBtn").style.display="none";return;
+  }
+  $("#golibBtn").style.display="";
+  const[front,b1,b2]=notes;
+  let html="";
+  if(b2)html+='<div class="stk back2" style="background-image:'+noteBg(b2)+'"><div class="peek">'+esc(b2.oneLiner||"")+'</div></div>';
+  if(b1)html+='<div class="stk back1" style="background-image:'+noteBg(b1)+'"><div class="peek">'+esc(b1.oneLiner||"")+'</div></div>';
+  html+='<div class="stk front" style="background-image:'+noteBg(front)+'" onclick="openNoteView(\''+front.id+'\',\'view\')"><div class="inner">';
+  if(front.transcribing){
+    html+='<div class="skel"><i style="width:85%"></i><i style="width:58%"></i><span class="sk-t">识别中…</span></div>';
+  }else{
+    html+='<div class="qm">“</div><div class="oneliner'+(front.oneLiner?"":" loading")+'">'+esc(front.oneLiner||"总结中…")+'</div>';
+    const audio=front.assets.find(a=>a.kind==="audio");
+    if(audio)html+='<button class="playpill" data-pp="'+front.id+'" onclick="event.stopPropagation();playVoice(\''+front.id+'\',this)"><span class="pp-ic">▶</span><span class="pp-bars"><i></i><i></i><i></i></span>'+fmtDur(audio.durationMs||0)+'</button>';
+    if(front.segments&&front.segments.length)html+='<div class="excerpt">'+esc(front.segments.join(" "))+'</div>';
+  }
+  html+='</div><div class="foot"><span>'+fmtTime(front.createdAt)+'</span><span class="kbadge '+front.kind+'">'+(front.kind==="todo"?"✅ Todo":"✨ 灵感")+'</span></div></div>';
+  slot.innerHTML=html;
+  bindLongPress(slot);
 }
-function toggleRaw(id){const n=S.notes.find(x=>x.id===id);if(!n)return;n.showRaw=!n.showRaw;save();renderFeed();renderLib()}
+
+/* ============ 灵感录 ============ */
+let libFilter="all";
+$("#pills").addEventListener("click",e=>{
+  const f=e.target.closest(".pill")?.dataset.f;if(!f)return;
+  libFilter=f;$$("#pills .pill").forEach(p=>p.classList.toggle("on",p.dataset.f===f));renderLib();
+});
+function renderLib(){
+  let notes=[...S.notes].sort((a,b)=>b.createdAt-a.createdAt);
+  if(libFilter!=="all")notes=notes.filter(n=>n.kind===libFilter);
+  $("#libList").innerHTML=notes.length?notes.map(n=>
+    '<div class="lib-item" data-id="'+n.id+'" onclick="openNoteView(\''+n.id+'\',\'view\')">'+
+    '<div class="thumb" style="background-image:'+noteBg(n)+'"></div>'+
+    '<div class="li-main"><div class="li-one">'+esc(n.oneLiner||n.text||"（记录中…）")+'</div>'+
+    '<div class="li-meta"><span>'+fmtTime(n.createdAt)+'</span><span class="kbadge '+n.kind+'">'+(n.kind==="todo"?"✅":"✨")+'</span>'+
+    (n.pickedTags&&n.pickedTags.length?'<span>'+n.pickedTags.map(t=>"#"+esc(t)).join(" ")+'</span>':"")+'</div></div>'+
+    '<button class="li-share" onclick="event.stopPropagation();openShare(\''+n.id+'\')">↗</button></div>'
+  ).join(""):'<div class="empty"><img src="assets/empty.png"><br>这个分类还没有内容</div>';
+  bindLongPress($("#libList"));
+  $$("#pills .pill").forEach(p=>{
+    const f=p.dataset.f;
+    const c=f==="all"?S.notes.length:S.notes.filter(n=>n.kind===f).length;
+    p.innerHTML=(f==="all"?"全部":f==="idea"?"✨ 灵感":"✅ Todo")+'<span class="n">'+c+"</span>";
+    p.classList.toggle("on",f===libFilter);
+  });
+}
+
+/* ============================================================
+   便利贴详情页 / 录后确认页
+   ============================================================ */
+let NV={id:null,mode:"view"};
+function openNoteView(id,mode){
+  NV={id,mode};
+  $("#noteview").classList.add("on");
+  $("#nvTitle").textContent=mode==="confirm"?"确认这条随记":"";
+  $("#nvDone").classList.toggle("on",mode==="confirm");
+  $("#nvMeta").classList.toggle("on",mode!=="confirm");
+  renderNoteView();
+}
+function closeNoteView(){$("#noteview").classList.remove("on");NV={id:null,mode:"view"}}
+function nvNote(){return S.notes.find(x=>x.id===NV.id)}
+function renderNoteView(){
+  const n=nvNote();if(!n){closeNoteView();return}
+  $("#nvSticky").style.backgroundImage=noteBg(n);
+  const inner=$("#nvInner");
+  let html="";
+  if(n.transcribing){
+    html='<div class="skel" style="padding-top:18%"><i style="width:85%"></i><i style="width:58%"></i><span class="sk-t">识别中…</span></div>';
+  }else{
+    html='<div class="qm">“</div><div class="oneliner'+(n.oneLiner?"":" loading")+'">'+esc(n.oneLiner||"总结中…")+'</div>';
+    const audio=n.assets.find(a=>a.kind==="audio");
+    const img=n.assets.find(a=>a.kind==="image");
+    if(audio)html+='<button class="playpill" onclick="playVoice(\''+n.id+'\',this)"><span class="pp-ic">▶</span><span class="pp-bars"><i></i><i></i><i></i></span>'+fmtDur(audio.durationMs||0)+'</button>';
+    if(img)html+='<img class="nv-img" src="'+img.localPath+'">';
+  }
+  inner.innerHTML=html;
+  /* 摘要/原文 */
+  $("#nvSumLabel").textContent=n.showRaw?"原始原文":"分段摘要";
+  $("#nvSwap").textContent=n.showRaw?"⇄ 摘要":"⇄ 原文";
+  const body=$("#nvSumBody");
+  if(n.showRaw){body.textContent=n.text||""}
+  else{body.innerHTML=(n.segments||[]).map((s,i)=>'<span style="display:block;margin-bottom:7px"><span style="color:var(--blue);font-size:12px;font-weight:600;margin-right:6px">'+"①②③"[i]+"</span>"+esc(s)+"</span>").join("")}
+  $("#nvSumcard").style.display=n.transcribing?"none":"";
+  /* 标签 */
+  const tags=$("#nvTags");
+  if(n.candTags&&n.candTags.length){
+    tags.innerHTML=(NV.mode==="confirm"?'<div class="kw-hint">选几个最想记住的标签（点击亮起）：</div>':"")+
+      n.candTags.map(t=>'<button class="kw'+((n.pickedTags||[]).includes(t)?" lit":"")+'" onclick="pickKw(\''+n.id+'\',\''+esc(t)+'\')">'+esc(t)+'</button>').join("");
+  }else tags.innerHTML="";
+  /* 元信息 / 完成按钮 */
+  if(NV.mode==="confirm"){
+    $("#nvDone").textContent=n.tagsDone?"完成，记下来 ✓":"先选标签，或直接完成";
+  }else{
+    $("#nvMeta").textContent=fmtTime(n.createdAt)+" · "+(n.kind==="todo"?"✅ Todo":"✨ 灵感")+(n.pickedTags&&n.pickedTags.length?" · "+n.pickedTags.map(t=>"#"+t).join(" "):"");
+  }
+}
+$("#nvSwap").addEventListener("click",()=>{const n=nvNote();if(!n)return;n.showRaw=!n.showRaw;save();renderNoteView()});
+$("#nvDone").addEventListener("click",()=>{
+  const n=nvNote();if(n)n.tagsDone=true;
+  save();closeNoteView();renderFeed();renderLib();toast("记录完成 ✓");
+});
 function pickKw(id,tag){
   const n=S.notes.find(x=>x.id===id);if(!n)return;
   n.pickedTags=n.pickedTags||[];
   const i=n.pickedTags.indexOf(tag);
   if(i>=0)n.pickedTags.splice(i,1);else n.pickedTags.push(tag);
-  if(!n.tagsDone&&n.pickedTags.length>0){n.tagsDone=true;toast("记录完成 ✓")}
-  save();renderFeed();renderLib();
+  if(!n.tagsDone&&n.pickedTags.length>0)n.tagsDone=true;
+  save();
+  if(NV.id===id)renderNoteView();
+  renderLib();
 }
 
 /* ============ 语音播放 ============ */
 let playing=null;
-function playVoice(id){
+function playVoice(id,btn){
   const n=S.notes.find(x=>x.id===id);if(!n)return;
-  const btn=$("#pp_"+id);const audio=n.assets.find(a=>a.kind==="audio");
+  const audio=n.assets.find(a=>a.kind==="audio");if(!audio)return;
   if(playing){playing.stop();if(playing.id===id)return}
   btn.classList.add("playing");btn.querySelector(".pp-ic").textContent="■";
   const total=audio.durationMs||5000,t0=Date.now();
@@ -427,25 +537,25 @@ function playVoice(id){
   playing={id,stop};
 }
 
-/* ============ 录入后 LLM 流水线：概括 → 流式摘要 → 候选标签 ============ */
+/* ============ 录入后 LLM 流水线（在确认页中流式呈现） ============ */
 async function runPipeline(n){
-  n.oneLiner=await llm("oneLiner",n.text);save();renderFeed();renderLib();
+  n.oneLiner=await llm("oneLiner",n.text);
+  save();renderFeed();if(NV.id===n.id)renderNoteView();
   const segs=await llm("segments",n.text);
   n.segments=[];save();
-  const body=()=>$("#sum_"+n.id);
-  renderFeed();renderLib();
-  for(let i=0;i<segs.length;i++){           /* 逐段流式输出 */
-    await new Promise(r=>setTimeout(r,520));
+  for(let i=0;i<segs.length;i++){
+    await new Promise(r=>setTimeout(r,560));
     n.segments.push(segs[i]);
-    const el=body();
-    if(el&&!n.showRaw){
+    if(NV.id===n.id&&!n.showRaw){
+      const body=$("#nvSumBody");
       const sp=document.createElement("span");sp.className="seg";
       sp.innerHTML='<span class="n">'+"①②③"[i]+"</span>"+esc(segs[i]);
-      el.appendChild(sp);
+      body.appendChild(sp);
     }
   }
   n.candTags=await llm("keywords",n.text);
   n.summarized=true;save();renderFeed();renderLib();
+  if(NV.id===n.id)renderNoteView();
 }
 
 /* ============ 新 Note ============ */
@@ -511,7 +621,7 @@ function waveLoop(){
 function moveRec(e){
   if(!R.active)return;
   const pt=e.touches?e.touches[0]:e;
-  const dy=R.startY-pt.clientY;              /* 上滑为正 */
+  const dy=R.startY-pt.clientY;
   const mid=window.innerWidth/2;
   let zone=null;
   if(dy>60)zone=pt.clientX<mid?"todo":"idea";
@@ -538,9 +648,11 @@ function finishRec(){
     const kind=zone==="todo"?"todo":"idea";
     const n=addNote(kind,{assets:[{id:uid(),kind:"audio",durationMs:dur}],transcribing:true});
     if(blob)audioBlobs[n.id]=URL.createObjectURL(blob);
-    setTimeout(async()=>{                 /* Mock ASR → LLM 流水线 */
+    openNoteView(n.id,"confirm");            /* 进入录后确认页 */
+    setTimeout(async()=>{
       n.text=MOCK_TRANSCRIPTS[Math.floor(Math.random()*MOCK_TRANSCRIPTS.length)];
-      n.transcribing=false;n.updatedAt=Date.now();save();renderFeed();renderLib();
+      n.transcribing=false;n.updatedAt=Date.now();save();renderFeed();
+      if(NV.id===n.id)renderNoteView();
       await runPipeline(n);
     },1400);
   };
@@ -573,16 +685,16 @@ function finishRec(){
     if(!holding||consumed)return;
     if(startY-e.clientY>50){consumed=true;holding=false;clearTimeout(timer);pickImage()}
   });
-  b.addEventListener("pointerup",e=>{
+  b.addEventListener("pointerup",()=>{
     clearTimeout(timer);
-    if(!consumed&&holding&&(Date.now()-0,true))openEditor();   /* 点按=打字 */
+    if(!consumed&&holding)openEditor();
     holding=false;
   });
   b.addEventListener("pointercancel",()=>{clearTimeout(timer);holding=false});
   b.addEventListener("contextmenu",e=>e.preventDefault());
 })();
 
-/* ============ 打字 ============ */
+/* ============ 打字（同样进确认页） ============ */
 function openEditor(){
   $("#editor").classList.add("on");
   const ta=$("#editorTa");
@@ -597,6 +709,7 @@ async function saveText(){
   if(!v){closeEditor();return}
   localStorage.removeItem("aha_draft2");closeEditor();
   const n=addNote("idea",{text:v});
+  openNoteView(n.id,"confirm");
   await runPipeline(n);
 }
 
@@ -620,65 +733,65 @@ async function saveImage(){
   const src=$("#imgPreview").src,cap=$("#imgCaption").value.trim();
   closeImgcom();
   const n=addNote("idea",{assets:[{id:uid(),kind:"image",localPath:src}],text:cap});
-  if(cap)await runPipeline(n);
+  if(cap){openNoteView(n.id,"confirm");await runPipeline(n)}
   else{n.oneLiner="（一张图片）";n.candTags=["生活","记录","图片"];n.summarized=true;save();renderFeed();renderLib()}
 }
 
 /* ============ 长按删除 ============ */
 function bindLongPress(box){
-  box.querySelectorAll(".note").forEach(el=>{
+  box.querySelectorAll(".stk.front,.lib-item").forEach(el=>{
     let t=null;
-    el.addEventListener("touchstart",()=>{t=setTimeout(()=>delNote(el.dataset.id),520)},{passive:true});
+    const id=el.dataset.id||el.onclick?.toString().match(/'([a-z0-9]+)'/i)?.[1];
+    el.addEventListener("touchstart",()=>{t=setTimeout(()=>delNote(id),560)},{passive:true});
     el.addEventListener("touchend",()=>clearTimeout(t));
     el.addEventListener("touchmove",()=>clearTimeout(t));
-    el.addEventListener("contextmenu",e=>{e.preventDefault();delNote(el.dataset.id)});
   });
 }
 function delNote(id){
-  if(!confirm("删除这条随记？"))return;
+  if(!id||!confirm("删除这条随记？"))return;
   S.notes=S.notes.filter(n=>n.id!==id);save();renderFeed();renderLib();toast("已删除");
 }
 
 /* ============================================================
-   分享页（灵感录 → 生成图片分享）
+   分享页（仿真便利贴渲染到画布）
    ============================================================ */
-const BORDERS=["#B9D9F2","#BCE8C9","#E3D6F7","#F5D3E0"];
 let shareId=null;
 function openShare(id){
   const n=S.notes.find(x=>x.id===id);if(!n)return;
   shareId=id;
   const cv=$("#shareCanvas"),ctx=cv.getContext("2d"),W=1080,H=1350;
   ctx.fillStyle="#FFFFFF";ctx.fillRect(0,0,W,H);
-  const m=90,cw=W-2*m,ch=H-2*m-30;
-  /* 便利贴白卡 + 彩色描边 */
-  ctx.fillStyle="#FFFFFF";ctx.strokeStyle=BORDERS[n.border]||BORDERS[0];ctx.lineWidth=6;
-  rr(ctx,m,m,cw,ch,44);ctx.fill();ctx.stroke();
-  /* 引号 */
-  ctx.fillStyle="#D8D8DE";ctx.font='120px "Songti SC",serif';
-  ctx.fillText("“",m+48,m+170);
-  ctx.textAlign="right";ctx.fillText("”",m+cw-48,m+ch-40);ctx.textAlign="left";
-  /* 一句话概括 */
-  ctx.fillStyle="#111114";ctx.font='600 56px -apple-system,"PingFang SC",sans-serif';
-  wrapText(ctx,n.oneLiner||n.text||"",m+70,m+250,cw-140,88);
-  /* 播放键示意（不含原音） */
-  const audio=n.assets.find(a=>a.kind==="audio");
-  if(audio){
-    const py=m+ch-190;
-    ctx.fillStyle="#111114";rr(ctx,m+70,py,300,84,42);ctx.fill();
-    ctx.fillStyle="#FFFFFF";ctx.font='38px sans-serif';
-    ctx.fillText("▶  "+fmtDur(audio.durationMs),m+115,py+56);
-  }
-  /* 标签 */
-  ctx.font='34px sans-serif';ctx.fillStyle="#6B6B72";
-  const tags=(n.pickedTags&&n.pickedTags.length?n.pickedTags:n.candTags||[]).map(t=>"#"+t).join("  ");
-  ctx.fillText(tags,m+70,m+ch-80);
-  /* 时间 + 类别 */
-  ctx.fillStyle="#AEAEB6";ctx.font='32px sans-serif';
-  ctx.fillText(fmtTime(n.createdAt)+" · "+(n.kind==="todo"?"✅ Todo":"✨ 灵感"),m+70,m+ch-24);
-  /* 品牌 */
-  ctx.fillStyle="rgba(0,0,0,.3)";ctx.font='32px sans-serif';ctx.textAlign="right";
-  ctx.fillText("Aha · 一声就记下",W-m,H-m+22);ctx.textAlign="left";
-  $("#shareOv").classList.add("on");
+  const draw=()=>{
+    const size=920,x=(W-size)/2,y=110;
+    ctx.drawImage(NOTE_IMGS[n.border%4],x,y,size,size);
+    /* 一句话概括（位于便签内部安全区） */
+    ctx.fillStyle="#111114";ctx.font='700 54px -apple-system,"PingFang SC",sans-serif';
+    wrapText(ctx,n.oneLiner||n.text||"",x+size*0.16,y+size*0.24,size*0.66,84);
+    /* 引号 */
+    ctx.fillStyle="rgba(0,0,0,.14)";ctx.font='110px "Songti SC",serif';
+    ctx.fillText("“",x+size*0.11,y+size*0.2);
+    /* 播放键示意 */
+    const audio=n.assets.find(a=>a.kind==="audio");
+    if(audio){
+      const py=y+size*0.62;
+      ctx.fillStyle="#111114";rr(ctx,x+size*0.16,py,280,80,40);ctx.fill();
+      ctx.fillStyle="#FFF";ctx.font='36px sans-serif';
+      ctx.fillText("▶  "+fmtDur(audio.durationMs),x+size*0.16+42,py+52);
+    }
+    /* 标签 */
+    ctx.font='34px sans-serif';ctx.fillStyle="#0A84FF";
+    const tags=(n.pickedTags&&n.pickedTags.length?n.pickedTags:n.candTags||[]).map(t=>"#"+t).join("  ");
+    ctx.fillText(tags,x+size*0.16,y+size*0.82);
+    /* 时间 + 类别 + 品牌 */
+    ctx.fillStyle="#AEAEB6";ctx.font='32px sans-serif';
+    ctx.fillText(fmtTime(n.createdAt)+" · "+(n.kind==="todo"?"✅ Todo":"✨ 灵感"),x+size*0.16,y+size*0.88);
+    ctx.fillStyle="rgba(0,0,0,.3)";ctx.textAlign="right";
+    ctx.fillText("Aha · 一声就记下",W-90,H-70);ctx.textAlign="left";
+    $("#shareOv").classList.add("on");
+  };
+  const img=NOTE_IMGS[n.border%4];
+  if(img.complete&&img.naturalWidth)draw();
+  else{img.onload=draw;img.onerror=()=>{ctx.fillStyle="#FFF7D6";ctx.fillRect(90,110,900,900);draw()} }
 }
 function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
 function wrapText(ctx,text,x,y,maxW,lh){
@@ -695,29 +808,6 @@ function downloadShare(){
   a.download="aha-"+new Date().toISOString().slice(0,10)+".png";
   a.href=$("#shareCanvas").toDataURL("image/png");a.click();
   toast("已保存图片");
-}
-
-/* ============================================================
-   灵感录
-   ============================================================ */
-let libFilter="all";
-$("#pills").addEventListener("click",e=>{
-  const f=e.target.closest(".pill")?.dataset.f;if(!f)return;
-  libFilter=f;$$("#pills .pill").forEach(p=>p.classList.toggle("on",p.dataset.f===f));renderLib();
-});
-function renderLib(){
-  let notes=[...S.notes].sort((a,b)=>b.createdAt-a.createdAt);
-  if(libFilter!=="all")notes=notes.filter(n=>n.kind===libFilter);
-  $("#libList").innerHTML=notes.length?notes.map(n=>noteHTML(n,true)).join(""):
-    '<div class="empty"><img src="assets/empty.png"><br>这个分类还没有内容</div>';
-  bindLongPress($("#libList"));
-  /* 更新 pill 计数 */
-  $$("#pills .pill").forEach(p=>{
-    const f=p.dataset.f;
-    const c=f==="all"?S.notes.length:S.notes.filter(n=>n.kind===f).length;
-    p.innerHTML=(f==="all"?"全部":f==="idea"?"✨ 灵感":"✅ Todo")+'<span class="n">'+c+"</span>";
-    p.classList.toggle("on",f===libFilter);
-  });
 }
 
 /* ============ 通用 ============ */
