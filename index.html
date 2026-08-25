@@ -7,14 +7,15 @@
 <title>Aha · 一声就记下</title>
 <link rel="icon" href="assets/logo.png">
 <style>
-/* ============ v0.4 · CSS 便利贴卡（内容全收框内）+ 可翻牌叠放 + 双图标导航 ============ */
+/* ============ v0.5 · pastel 色卡 + 居中叠放 + 文件夹标签切换 ============ */
 :root{
   --bg:#FFFFFF; --ink:#111114; --ink-2:#6B6B72; --ink-3:#AEAEB6;
   --fill:#F2F2F5; --line:#ECECF0;
   --blue:#0A84FF; --blue-deep:#0066D6; --blue-soft:#EAF2FF;
   --green:#34C759; --orange:#FF9F0A; --red:#FF3B30;
-  --b0:#A8CBF5; --b1:#A9E4C0; --b2:#D9C8F5; --b3:#F5C6DA;   /* 便利贴描边 */
-  --shadow:0 10px 30px rgba(0,0,0,.08);
+  --c0:#CDEBF1; --c1:#DEF1D0; --c2:#CBCEEA; --c3:#F8E5E5; --c4:#F8F6F5;  /* 用户色卡 */
+  --shadow:0 10px 30px rgba(0,0,0,.09);
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
   --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Helvetica Neue",sans-serif;
   --serif:"Songti SC","STSong","Noto Serif SC",serif;
 }
@@ -30,25 +31,29 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 .view::-webkit-scrollbar{display:none}
 .view.active{display:block}
 
-/* ============ 顶部双图标导航：左 ☰ 记住灵感 · 右 ⟳ 往期记录 ============ */
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 4px}
-.navbtn{width:44px;height:44px;border-radius:50%;background:var(--fill);border:none;font-size:18px;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;transition:all .2s}
-.navbtn.here{background:var(--blue-soft);color:var(--blue)}
-.navbtn .cnt{position:absolute;top:-3px;right:-3px;background:var(--blue);color:#fff;font-size:9.5px;min-width:17px;height:17px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;font-weight:700}
-.topbar .logo{height:30px;border-radius:8px}
+/* ============ 顶部：文件夹标签切换（左=记住灵感 · 右=往期记录，一前一后） ============ */
+.apphead{display:flex;align-items:center;padding:16px 18px 0;gap:12px}
+.apphead .logo{height:30px;border-radius:8px}
+.foldertabs{flex:1;display:flex;justify-content:center;align-items:center}
+.ftab{border:none;background:var(--fill);color:var(--ink-2);font-size:13px;font-weight:500;padding:11px 20px;cursor:pointer;border-radius:14px;position:relative;transition:all .25s var(--ease-spring);font-family:var(--sans);transform:scale(.96)}
+.ftab+.ftab{margin-left:-12px}
+.ftab.on{background:#fff;color:var(--ink);font-weight:700;z-index:2;transform:scale(1.04);box-shadow:0 6px 18px rgba(0,0,0,.1)}
+.ftab .cnt{background:var(--blue);color:#fff;font-size:9.5px;min-width:17px;height:17px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;padding:0 4px;font-weight:700;margin-left:5px;vertical-align:1px}
 
 /* 问候区 */
-.greet{padding:24px 26px 4px;text-align:center}
-.greet .g-main{font-size:24px;font-weight:700;letter-spacing:.5px}
+.greet{padding:12px 26px 2px;text-align:center}
+.greet .g-main{font-size:22px;font-weight:700;letter-spacing:.5px}
 .greet .g-main::before{content:"“"}.greet .g-main::after{content:"”"}
-.greet .g-sub{margin-top:8px;font-size:13px;color:var(--ink-3)}
+.greet .g-sub{margin-top:6px;font-size:12.5px;color:var(--ink-3)}
+#view-feed.active{display:flex;flex-direction:column}
+#stackSlot{flex:1;display:flex;align-items:center;justify-content:center;width:100%;padding-bottom:12px}
 
-/* ============ 便利贴卡（CSS 绘制：白卡+彩描边+引号+黑胶囊，全在框内） ============ */
-.card{position:relative;background:#fff;border:2px solid var(--b0);border-radius:28px;box-shadow:var(--shadow);overflow:hidden}
-.card.b0{border-color:var(--b0)}.card.b1{border-color:var(--b1)}
-.card.b2{border-color:var(--b2)}.card.b3{border-color:var(--b3)}
+/* ============ 便利贴卡（pastel 纯色填充，全在框内） ============ */
+.card{position:relative;background:var(--c0);border:none;border-radius:28px;box-shadow:var(--shadow);overflow:hidden}
+.card.b0{background:var(--c0)}.card.b1{background:var(--c1)}
+.card.b2{background:var(--c2)}.card.b3{background:var(--c3)}.card.b4{background:var(--c4)}
 .card .inner{position:absolute;inset:0;padding:20px 20px 14px;display:flex;flex-direction:column}
-.qm{font-family:var(--serif);font-size:38px;line-height:1;color:rgba(0,0,0,.13);position:absolute;pointer-events:none}
+.qm{font-family:var(--serif);font-size:38px;line-height:1;color:rgba(0,0,0,.17);position:absolute;pointer-events:none}
 .qm.tl{top:12px;left:16px}
 .qm.br{right:16px;bottom:64px}
 .oneliner{font-size:20px;font-weight:700;line-height:1.5;margin-top:26px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
@@ -64,7 +69,7 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 .excerpt{margin-top:10px;font-size:13px;line-height:1.75;color:rgba(0,0,0,.6);max-height:70px;overflow:hidden;
   -webkit-mask-image:linear-gradient(#000 35%,transparent 98%);mask-image:linear-gradient(#000 35%,transparent 98%)}
 .card .spacer{flex:1}
-.cardfoot{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink-3)}
+.cardfoot{display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(0,0,0,.45)}
 .cardfoot .playpill{margin-left:auto}
 .kbadge{border-radius:8px;padding:2.5px 9px;font-size:10.5px;font-weight:600;color:#fff}
 .kbadge.idea{background:var(--orange)}.kbadge.todo{background:var(--green)}
@@ -74,13 +79,13 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 .skel .sk-t{font-size:11px;color:rgba(0,0,0,.4)}
 @keyframes shim{from{background-position:200% 0}to{background-position:-200% 0}}
 
-/* ============ 首页叠放堆：点哪张哪张到最前 ============ */
-.stack{position:relative;width:84%;aspect-ratio:1/1;margin:26px auto 10px}
-.stk{position:absolute;inset:0;cursor:pointer;transition:transform .38s cubic-bezier(.2,.8,.3,1.08),opacity .3s,box-shadow .3s}
+/* ============ 首页叠放堆：居中 + 扇形错位不溢出 + 点哪张哪张到最前 ============ */
+.stack{position:relative;width:min(76%,300px);aspect-ratio:1/1;margin:0 auto}
+.stk{position:absolute;inset:0;cursor:pointer;transition:transform .38s var(--ease-spring),opacity .3s}
 .stk.p0{z-index:3;transform:none}
-.stk.p1{z-index:2;transform:translate(20px,-16px) rotate(4deg) scale(.95)}
-.stk.p2{z-index:1;transform:translate(38px,-30px) rotate(8deg) scale(.9);opacity:.95}
-.stk.p0:active{transform:scale(.985)}
+.stk.p1{z-index:2;transform:translate(-13px,-12px) rotate(-5deg) scale(.93)}
+.stk.p2{z-index:1;transform:translate(13px,-22px) rotate(4deg) scale(.88);opacity:.96}
+.stk.p0:active{transform:scale(.97)}
 .stk .peek{margin-top:30px;font-size:16px;font-weight:600;line-height:1.55;color:rgba(0,0,0,.6);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 
 /* 空状态 */
@@ -167,16 +172,14 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 .share-ov .cl{background:rgba(255,255,255,.16);color:#fff}
 
 /* ============ 灵感录 ============ */
-.lib-head{display:flex;align-items:center;padding:6px 18px 4px}
-.lib-head .t{font-size:22px;font-weight:700;margin-left:12px}
-.pills{display:flex;gap:8px;padding:14px 18px 6px}
+.pills{display:flex;gap:8px;padding:16px 18px 6px}
 .pill{border:none;background:var(--fill);color:var(--ink-2);border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer}
 .pill.on{background:var(--blue);color:#fff;font-weight:600}
 .pill .n{opacity:.65;font-size:11px;margin-left:3px}
 .lib-item{display:flex;align-items:center;gap:13px;margin:10px 18px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px 14px;box-shadow:var(--shadow);cursor:pointer;animation:drop .35s ease}
-.li-thumb{width:46px;height:46px;border-radius:13px;background:#fff;border:1.5px solid var(--b0);flex:none;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:20px;color:rgba(0,0,0,.16)}
-.li-thumb.b0{border-color:var(--b0)}.li-thumb.b1{border-color:var(--b1)}
-.li-thumb.b2{border-color:var(--b2)}.li-thumb.b3{border-color:var(--b3)}
+.li-thumb{width:46px;height:46px;border-radius:13px;background:var(--c0);border:none;flex:none;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:20px;color:rgba(0,0,0,.22)}
+.li-thumb.b0{background:var(--c0)}.li-thumb.b1{background:var(--c1)}
+.li-thumb.b2{background:var(--c2)}.li-thumb.b3{background:var(--c3)}.li-thumb.b4{background:var(--c4)}
 .lib-item .li-main{flex:1;min-width:0}
 .lib-item .li-one{font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lib-item .li-meta{margin-top:5px;display:flex;align-items:center;gap:7px;font-size:11px;color:var(--ink-3)}
@@ -191,13 +194,17 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 <body>
 <div class="phone" id="phone">
 
+  <!-- ===== 共享头部：logo + 文件夹标签切换 ===== -->
+  <div class="apphead">
+    <img class="logo" src="assets/logo.png" alt="Aha">
+    <div class="foldertabs">
+      <button class="ftab on" id="ftFeed" onclick="switchTab('feed')">记住灵感</button>
+      <button class="ftab" id="ftLib" onclick="switchTab('lib')">往期记录<span class="cnt" id="noteCnt">0</span></button>
+    </div>
+  </div>
+
   <!-- ===== 灵感流（记住灵感） ===== -->
   <div class="view active" id="view-feed">
-    <div class="topbar">
-      <button class="navbtn here" id="navFeed" onclick="switchTab('feed')" title="记住灵感">☰</button>
-      <img class="logo" src="assets/logo.png" alt="Aha">
-      <button class="navbtn" id="navLib" onclick="switchTab('lib')" title="往期记录">⟳<span class="cnt" id="noteCnt">0</span></button>
-    </div>
     <div class="greet">
       <div class="g-main" id="greetMain">下午好！</div>
       <div class="g-sub" id="greetSub">一声就记下</div>
@@ -207,12 +214,6 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 
   <!-- ===== 灵感录（往期记录） ===== -->
   <div class="view" id="view-lib">
-    <div class="topbar">
-      <button class="navbtn" onclick="switchTab('feed')" title="记住灵感">☰</button>
-      <img class="logo" src="assets/logo.png" alt="Aha">
-      <button class="navbtn here" title="往期记录">⟳<span class="cnt" id="noteCnt2">0</span></button>
-    </div>
-    <div class="lib-head"><div class="t">往期记录</div></div>
     <div class="pills" id="pills">
       <button class="pill on" data-f="all">全部</button>
       <button class="pill" data-f="idea">✨ 灵感</button>
@@ -297,14 +298,14 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 
 <script>
 /* ============================================================
-   Aha 可交互原型 v0.4
-   CSS 便利贴卡（内容全在框内）· 叠放翻牌 · 左☰记住灵感 / 右⟳往期记录
+   Aha 可交互原型 v0.5
+   pastel 色卡 · 居中扇形叠放 · 文件夹标签切换（记住灵感 / 往期记录）
    ============================================================ */
 "use strict";
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const LS_KEY="aha_v2";
 const DAY=86400000;
-const BORDERS=["#A8CBF5","#A9E4C0","#D9C8F5","#F5C6DA"];
+const CARD_BG=["#CDEBF1","#DEF1D0","#CBCEEA","#F8E5E5","#F8F6F5"];
 
 /* ============================================================
    ★ LLM 接入配置（提示词待用户提供后填入 prompts 即可生效）
@@ -376,7 +377,7 @@ function seedNote(ageMs,kind,text,oneLiner,segments,candTags,pickedTags,dur,i){
   return{id:uid()+i,kind,createdAt:Date.now()-ageMs,updatedAt:Date.now()-ageMs,
     assets:dur?[{id:uid(),kind:"audio",durationMs:dur}]:[],
     text,oneLiner,segments,candTags,pickedTags,tagsDone:true,summarized:true,
-    transcribing:false,border:i%4};
+    transcribing:false,border:i%5};
 }
 function seed(){
   S={notes:[
@@ -431,7 +432,6 @@ function renderFeed(){
   const slot=$("#stackSlot");
   syncStack();
   $("#noteCnt").textContent=S.notes.length;
-  $("#noteCnt2").textContent=S.notes.length;
   if(!stackOrder.length){
     slot.innerHTML='<div class="empty"><img src="assets/empty.png"><br>还没有随记<br>按住下面「按住说话」，啊一声试试</div>';return;
   }
@@ -587,7 +587,7 @@ const MOCK_TRANSCRIPTS=[
 function addNote(kind,partial){
   const n=Object.assign({id:uid(),kind:kind||"idea",createdAt:Date.now(),updatedAt:Date.now(),
     assets:[],text:"",oneLiner:"",segments:[],candTags:[],pickedTags:[],tagsDone:false,
-    summarized:false,transcribing:false,showRaw:false,border:Math.floor(Math.random()*4)},partial);
+    summarized:false,transcribing:false,showRaw:false,border:Math.floor(Math.random()*5)},partial);
   S.notes.push(n);
   stackOrder.unshift(n.id);stackOrder=stackOrder.slice(0,3);
   save();renderFeed();renderLib();
@@ -782,11 +782,11 @@ function openShare(id){
   const cv=$("#shareCanvas"),ctx=cv.getContext("2d"),W=1080,H=1350;
   ctx.fillStyle="#FFFFFF";ctx.fillRect(0,0,W,H);
   const m=110,cw=W-2*m,ch=cw,y=120;
-  /* 白卡 + 彩描边 */
-  ctx.fillStyle="#FFFFFF";ctx.strokeStyle=BORDERS[n.border%4];ctx.lineWidth=7;
-  rr(ctx,m,y,cw,ch,56);ctx.fill();ctx.stroke();
+  /* pastel 纯色便利贴 */
+  ctx.fillStyle=CARD_BG[n.border%5];
+  rr(ctx,m,y,cw,ch,56);ctx.fill();
   /* 引号（框内） */
-  ctx.fillStyle="rgba(0,0,0,.13)";ctx.font='110px "Songti SC",serif';
+  ctx.fillStyle="rgba(0,0,0,.16)";ctx.font='110px "Songti SC",serif';
   ctx.fillText("“",m+40,y+120);
   ctx.textAlign="right";ctx.fillText("”",m+cw-40,y+ch-150);ctx.textAlign="left";
   /* 一句话概括（框内） */
@@ -841,6 +841,8 @@ function greet(){
 function switchTab(v){
   $$(".view").forEach(x=>x.classList.remove("active"));
   $("#view-"+v).classList.add("active");
+  $("#ftFeed").classList.toggle("on",v==="feed");
+  $("#ftLib").classList.toggle("on",v==="lib");
   $("#inputbar").style.visibility=v==="feed"?"visible":"hidden";
   if(v==="lib")renderLib();
 }
