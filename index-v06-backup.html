@@ -46,8 +46,8 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 .greet .g-main{font-size:22px;font-weight:700;letter-spacing:.5px}
 .greet .g-main::before{content:"“"}.greet .g-main::after{content:"”"}
 .greet .g-sub{margin-top:6px;font-size:12.5px;color:var(--ink-3)}
-#view-feed.active{display:flex;flex-direction:column;min-height:0}
-#stackSlot{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0;overflow:hidden}
+#view-feed.active{display:flex;flex-direction:column}
+#stackSlot{flex:1;display:flex;align-items:flex-end;justify-content:center;width:100%;padding-bottom:26px}
 
 /* ============ 便利贴卡（白底 + 色卡描边，内容全在框内） ============ */
 .card{position:relative;background:#fff;border:2.5px solid var(--c0);border-radius:28px;box-shadow:var(--shadow);overflow:hidden}
@@ -80,16 +80,22 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 .skel .sk-t{font-size:11px;color:rgba(0,0,0,.4)}
 @keyframes shim{from{background-position:200% 0}to{background-position:-200% 0}}
 
-/* ============ 首页叠放堆：3 层扇形错位 + 点按翻牌（支持左右滑动） ============ */
-/* ============ 首页叠放堆：3 层扇形错位 + 居中略下移 + 点哪张哪张到最前（支持左右滑动） ============ */
-.stack{position:relative;width:min(76%,300px);aspect-ratio:1/1;margin:auto;touch-action:pan-y}
-.stk{position:absolute;inset:0;cursor:pointer;transition:transform .38s var(--ease-spring),opacity .3s}
+/* ============ 首页叠放堆：前 2 张露内容 + 更深层半透明空卡 + 左右滑动切换 ============ */
+.stack{position:relative;width:min(78%,304px);aspect-ratio:1/1;margin:0 auto;touch-action:pan-y}
+.stk{position:absolute;inset:0;cursor:pointer;transition:transform .4s var(--ease-spring),opacity .32s}
 .stk.drag{transition:none}
-.stk.p0{z-index:3;transform:none}
-.stk.p1{z-index:2;transform:translate(-13px,-12px) rotate(-5deg) scale(.93)}
-.stk.p2{z-index:1;transform:translate(13px,-22px) rotate(4deg) scale(.88);opacity:.96}
-.stk.p0:active{transform:scale(.97)}
+.stk.p0{z-index:4;transform:none}
+.stk.p1{z-index:3;transform:translate(-16px,-14px) rotate(-4.5deg) scale(.95)}
+.stk.p2{z-index:2;transform:translate(16px,-26px) rotate(4deg) scale(.91);opacity:.9}
+.stk.p3{z-index:1;transform:translate(0,-38px) scale(.87);opacity:.42}
+.stk.p4{z-index:0;transform:translate(0,-48px) scale(.83);opacity:.22}
+.stk.p3 .inner,.stk.p4 .inner{visibility:hidden}
+.stk.p0:active{transform:scale(.975)}
 .stk .peek{margin-top:30px;font-size:16px;font-weight:600;line-height:1.55;color:rgba(0,0,0,.55);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.swipehint{text-align:center;font-size:11px;color:var(--ink-3);margin-top:14px;letter-spacing:.5px}
+.dots{display:flex;justify-content:center;gap:6px;margin-top:12px}
+.dots i{width:6px;height:6px;border-radius:50%;background:var(--line);transition:all .25s}
+.dots i.on{background:var(--ink);width:18px;border-radius:3px}
 
 /* 空状态 */
 .empty{padding:50px 30px;text-align:center;color:var(--ink-3);font-size:13px;line-height:2}
@@ -409,8 +415,8 @@ function fmtDur(ms){const s=Math.round(ms/1000);return Math.floor(s/60)+":"+Stri
 let toastT=null;
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("on"),2200)}
 
-/* ============ 首页叠放堆：最近 3 张扇形错位，点哪张哪张到最前 ============ */
-const STACK_MAX=3;   // 恢复 3 层展示（v0.5 样式）
+/* ============ 首页叠放堆：前 2 张露内容 + 后面半透明空卡 + 左右滑动切换 ============ */
+const STACK_MAX=5;   // 最多渲染 5 层：p0/p1/p2 露内容，p3/p4 半透明空卡
 let stackOrder=[];   // id 数组，0=最前
 function syncStack(newFrontId){
   const recent=[...S.notes].sort((a,b)=>b.createdAt-a.createdAt).slice(0,STACK_MAX).map(n=>n.id);
@@ -444,9 +450,13 @@ function renderFeed(){
     const n=S.notes.find(x=>x.id===id);if(!n)return "";
     const cls="stk card b"+n.border+" p"+pos;
     if(pos===0)return '<div class="'+cls+'" data-nid="'+n.id+'" onclick="openNoteView(\''+n.id+'\',\'view\')"><div class="inner">'+cardInnerHTML(n)+'</div></div>';
-    return '<div class="'+cls+'" data-nid="'+n.id+'" onclick="bringFront(\''+n.id+'\')"><div class="inner"><div class="qm tl">“</div><div class="peek">'+esc(n.oneLiner||"")+'</div></div></div>';
+    if(pos<=2)return '<div class="'+cls+'" data-nid="'+n.id+'" onclick="bringFront(\''+n.id+'\')"><div class="inner"><div class="qm tl">“</div><div class="peek">'+esc(n.oneLiner||"")+'</div></div></div>';
+    return '<div class="'+cls+'"><div class="inner"></div></div>';   /* 深层：不露内容 */
   }).join("");
-  slot.innerHTML='<div class="stack" id="stackEl">'+cards+'</div>';
+  const dots=stackOrder.map((id,pos)=>'<i class="'+(pos===0?"on":"")+'"></i>').join("");
+  slot.innerHTML='<div><div class="stack" id="stackEl">'+cards+'</div>'+
+    '<div class="dots">'+dots+'</div>'+
+    '<div class="swipehint">← 左右滑动切换 · 点击查看详情 →</div></div>';
   bindLongPress(slot);
   bindSwipe();
 }
