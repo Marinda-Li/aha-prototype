@@ -31,23 +31,46 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 .view::-webkit-scrollbar{display:none}
 .view.active{display:block}
 
-/* ============ 顶部：连体分段控件 + 居中线稿 logo ============ */
-.apphead{display:flex;flex-direction:column;align-items:center;padding:14px 18px 0;gap:12px}
-.seghead{display:flex;background:var(--fill);border-radius:999px;padding:4px;position:relative;width:min(84%,300px)}
-.seghead .thumb{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);background:#fff;border-radius:999px;box-shadow:0 3px 12px rgba(0,0,0,.12);transition:transform .32s var(--ease-spring)}
-.seghead.right .thumb{transform:translateX(100%)}
-.ftab{flex:1;border:none;background:none;color:var(--ink-2);font-size:13.5px;font-weight:500;padding:10px 6px;cursor:pointer;border-radius:999px;position:relative;z-index:1;transition:color .25s;font-family:var(--sans)}
-.ftab.on{color:var(--ink);font-weight:700}
+/* ============ 顶部：文件夹标签切换（记住灵感 / 往期记录，一前一后） ============ */
+.foldertabs{display:flex;justify-content:center;align-items:flex-end;padding:0 24px;position:relative;height:52px}
+.ftab{
+  border:none;background:transparent;font-size:14px;font-weight:500;
+  padding:12px 22px 10px;cursor:pointer;position:relative;
+  font-family:var(--sans);color:var(--ink-2);
+  border-radius:18px 18px 0 0;
+  transition:all .28s var(--ease-spring);
+  margin-bottom:-1px;
+}
 .ftab .cnt{background:var(--blue);color:#fff;font-size:9.5px;min-width:17px;height:17px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;padding:0 4px;font-weight:700;margin-left:5px;vertical-align:1px}
-.applogo{width:40px;height:40px;object-fit:contain;opacity:.85}
+.ftab.active{
+  background:#fff;color:var(--ink);font-weight:700;z-index:2;
+  box-shadow:0 -6px 20px rgba(0,0,0,.1),0 1px 0 #fff;
+  padding:14px 26px 12px;
+  transform:scale(1.02);
+}
+.ftab:not(.active){
+  background:var(--fill);z-index:1;
+  transform:translateY(3px);
+}
+.ftab:first-child{margin-right:-14px}
+.ftab:last-child{margin-left:-14px}
+/* 标签底部连接线 */
+.foldertabs::after{content:"";position:absolute;bottom:0;left:24px;right:24px;height:1px;background:var(--line);z-index:0}
 
-/* 问候区 */
-.greet{padding:14px 26px 2px;text-align:center}
-.greet .g-main{font-size:22px;font-weight:700;letter-spacing:.5px}
-.greet .g-main::before{content:"“"}.greet .g-main::after{content:"”"}
-.greet .g-sub{margin-top:6px;font-size:12.5px;color:var(--ink-3)}
+/* 品牌区：logo 圆 + 标语（按手绘布局居中上方） */
+.brandzone{padding:20px 0 0;text-align:center}
+.brandzone .applogo{width:56px;height:56px;object-fit:contain;opacity:.85}
+.brandzone .brandline{margin-top:10px;font-size:13px;color:var(--ink-3);letter-spacing:.5px}
+.brandzone .brandline b{color:var(--ink);font-weight:600}
+
 #view-feed.active{display:flex;flex-direction:column;min-height:0}
-#stackSlot{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0;overflow:hidden}
+#stackSlot{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0;overflow:hidden;position:relative}
+
+/* 左右滑动箭头指示（相对 stackSlot 定位） */
+.swipe-arrow{position:absolute;top:50%;transform:translateY(-50%);font-size:22px;color:var(--ink-3);opacity:0;transition:opacity .2s;pointer-events:none;z-index:5}
+.swipe-arrow.l{left:2px}
+.swipe-arrow.r{right:2px}
+.swipe-arrow.show{opacity:.45}
 
 /* ============ 便利贴卡（白底 + 色卡描边，内容全在框内） ============ */
 .card{position:relative;background:#fff;border:2.5px solid var(--c0);border-radius:28px;box-shadow:var(--shadow);overflow:hidden}
@@ -197,21 +220,17 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 <body>
 <div class="phone" id="phone">
 
-  <!-- ===== 共享头部：连体分段控件 + 居中线稿 logo ===== -->
-  <div class="apphead">
-    <div class="seghead" id="segHead">
-      <div class="thumb"></div>
-      <button class="ftab on" id="ftFeed" onclick="switchTab('feed')">记住灵感</button>
-      <button class="ftab" id="ftLib" onclick="switchTab('lib')">往期记录<span class="cnt" id="noteCnt">0</span></button>
-    </div>
-    <img class="applogo" src="assets/logo-line.png" alt="Aha">
+  <!-- ===== 文件夹标签导航 ===== -->
+  <div class="foldertabs" id="folderTabs">
+    <button class="ftab active" id="ftFeed" onclick="switchTab('feed')">记住灵感</button>
+    <button class="ftab" id="ftLib" onclick="switchTab('lib')">往期记录<span class="cnt" id="noteCnt">0</span></button>
   </div>
 
   <!-- ===== 灵感流（记住灵感） ===== -->
   <div class="view active" id="view-feed">
-    <div class="greet">
-      <div class="g-main" id="greetMain">下午好！</div>
-      <div class="g-sub" id="greetSub">一声就记下</div>
+    <div class="brandzone">
+      <img class="applogo" src="assets/logo-line.png" alt="Aha">
+      <div class="brandline"><b>Aha</b> · 一声就记下</div>
     </div>
     <div id="stackSlot"></div>
   </div>
@@ -302,8 +321,8 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 
 <script>
 /* ============================================================
-   Aha 可交互原型 v0.6
-   白底色卡描边 · 居中线稿 logo · 分段控件切换 · 卡片左右滑动
+   Aha 可交互原型 v0.7
+   文件夹标签导航 · 手绘布局 · 白底色卡描边 · 真实场景文案
    ============================================================ */
 "use strict";
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
@@ -385,11 +404,11 @@ function seedNote(ageMs,kind,text,oneLiner,segments,candTags,pickedTags,dur,i){
 }
 function seed(){
   S={notes:[
-    seedNote(1.5*3600000,"idea","突然想到，首页的重逢卡可以做成随机翻牌，每次打开都有新鲜感。这样用户每天愿意多打开一次。重逢率比捕获率更难做，也更值钱。","重逢卡做成随机翻牌，提升打开频次",["首页重逢卡可以做成随机翻牌","每次打开都有新鲜感，提高日活","重逢率比捕获率更难做也更值钱"],["产品","灵感","重逢率"],["产品","灵感"],23000,0),
-    seedNote(4*3600000,"todo","明天记得把原型发给三个人试用，重点观察他们会不会用按住说话，还有上滑选分类这个手势能不能被发现。","明天发原型给三人试用并观察手势",["明天把原型发给三个人试用","重点观察按住说话的使用情况","上滑选分类手势的发现率待验证"],["待办","原型","测试"],["待办"],null,1),
-    seedNote(27*3600000,"idea","今天开会有个启发：少即是多，克制才显高级。功能每多一个，用户决策成本就高一截。回去把设置项再砍一半。","少即是多：设置项再砍一半",["开会的启发是少即是多","克制才显高级","功能越多用户决策成本越高","回去把设置项再砍一半"],["工作","产品","设计"],["产品"],41000,2),
-    seedNote(3*DAY,"todo","提醒我工作的时候每小时喝水，最近总是忘记，下午头有点疼。","工作时每小时喝水",["工作时每小时喝水","最近总是忘记","下午会头疼"],["待办","健康","生活"],["待办","健康"],12000,3),
-    seedNote(5*DAY,"idea","帮我点一杯最近的瑞幸咖啡要自取，这句话本身提醒我：语音指令和语音随记可以共用一个入口。","语音指令与随记可共用一个入口",["点瑞幸咖啡自取的语音指令","启发：语音指令和语音随记","可以共用一个入口"],["生活","灵感","语音"],["灵感"],8000,0),
+    seedNote(1.5*3600000,"idea","我想做一个南头古城的修复数字展示项目，会用到一些全息投影。古城墙的三维扫描数据可以和AR叠加，游客走到哪个位置，手机上就能看到当年这个角度的历史照片。还可以做一个时间轴滑块，从明代一直拖到现在。","南头古城修复数字展示：全息投影+AR历史叠加",["南头古城修复数字展示项目","全息投影还原古城墙","三维扫描数据与AR叠加","游客走到哪个位置就看到当年历史照片","时间轴滑块从明代拖到现在"],["产品","灵感","AR","文化","全息投影"],["产品","灵感"],47000,0),
+    seedNote(4*3600000,"todo","明天记得约建筑师朋友聊一下南头古城的测绘精度，全息投影对模型面数的要求很高，得提前确认点云数据够不够用。另外问下他有没有做过类似的文化遗产数字化项目。","明天约建筑师聊南头古城测绘精度",["明天约建筑师朋友聊南头古城","全息投影对模型面数要求很高","提前确认点云数据够不够用","问下有没有文化遗产数字化经验"],["待办","工作","测绘"],["待办"],null,1),
+    seedNote(27*3600000,"idea","今天路过南头古城，看到城墙上爬满了藤蔓，突然觉得这种自然侵蚀本身也是一种美。数字展示不应该只还原完美状态，也应该呈现时间留下的痕迹。可以做一个对比模式，左边是修复后的样子，右边是现在真实的样子。","数字展示应呈现时间痕迹，做修复前后对比模式",["路过南头古城看到城墙爬满藤蔓","自然侵蚀本身也是一种美","数字展示不应只还原完美状态","做对比模式：左边修复后右边现在真实样子"],["灵感","文化","设计","时间"],["灵感","文化"],32000,2),
+    seedNote(3*DAY,"todo","提醒我周五前把南头古城项目的预算初稿做出来，全息投影设备的租赁费用、AR开发的工时、还有内容制作（历史影像收集+三维建模）三块要分开算。","周五前出南头古城项目预算初稿",["周五前出预算初稿","全息投影设备租赁费用","AR开发工时","内容制作：历史影像收集+三维建模"],["待办","财务","工作"],["待办"],18000,3),
+    seedNote(5*DAY,"idea","突然想到，Aha 的导出分享图可以加一个「灵感地图」模式，把同一个项目的所有灵感便利贴钉在一张虚拟软木板上，导出后就是一张项目灵感全景图。","导出分享图加灵感地图模式",["导出分享图加灵感地图模式","同一项目的灵感便利贴钉在虚拟软木板上","导出后就是项目灵感全景图"],["产品","灵感","导出"],["产品","灵感"],21000,4),
   ]};
   save();
 }
@@ -446,7 +465,9 @@ function renderFeed(){
     if(pos===0)return '<div class="'+cls+'" data-nid="'+n.id+'" onclick="openNoteView(\''+n.id+'\',\'view\')"><div class="inner">'+cardInnerHTML(n)+'</div></div>';
     return '<div class="'+cls+'" data-nid="'+n.id+'" onclick="bringFront(\''+n.id+'\')"><div class="inner"><div class="qm tl">“</div><div class="peek">'+esc(n.oneLiner||"")+'</div></div></div>';
   }).join("");
-  slot.innerHTML='<div class="stack" id="stackEl">'+cards+'</div>';
+  const hasMulti=stackOrder.length>1;
+  slot.innerHTML='<div class="stack" id="stackEl">'+cards+'</div>'+
+    (hasMulti?'<span class="swipe-arrow l show" id="arrowL">◁</span><span class="swipe-arrow r show" id="arrowR">▷</span>':"");
   bindLongPress(slot);
   bindSwipe();
 }
@@ -872,28 +893,10 @@ function downloadShare(){
 }
 
 /* ============ 通用 ============ */
-const GREETS=[[5,"早上好"],[11,"中午好"],[14,"下午好"],[18,"晚上好"],[24,"夜深了"]];
-const SUBS=["一声就记下","剩下的它替你记住","想到了，说一声","Aha，然后就不会忘了"];
-let subIdx=0;
-function greet(){
-  const h=new Date().getHours();
-  const g=GREETS.reduce((acc,[limit,text])=>h<limit?acc||text:acc,null)||GREETS[0][1];
-  $("#greetMain").textContent=g+"！";
-  $("#greetSub").textContent=SUBS[subIdx%SUBS.length];
-}
-function switchTab(v){
-  $$(".view").forEach(x=>x.classList.remove("active"));
-  $("#view-"+v).classList.add("active");
-  $("#ftFeed").classList.toggle("on",v==="feed");
-  $("#ftLib").classList.toggle("on",v==="lib");
-  $("#segHead").classList.toggle("right",v==="lib");
-  $("#inputbar").style.visibility=v==="feed"?"visible":"hidden";
-  if(v==="lib")renderLib();
-}
-function resetAll(){if(confirm("清空并恢复演示数据？")){localStorage.removeItem(LS_KEY);localStorage.removeItem("aha_draft2");stackOrder=[];load();renderFeed();renderLib();greet();toast("已重置")}}
+function resetAll(){if(confirm("清空并恢复演示数据？")){localStorage.removeItem(LS_KEY);localStorage.removeItem("aha_draft2");stackOrder=[];load();renderFeed();renderLib();toast("已重置")}}
 
 /* ============ 启动 ============ */
-load();greet();renderFeed();renderLib();
+load();renderFeed();renderLib();
 </script>
 </body>
 </html>
