@@ -14,6 +14,7 @@
   --blue:#0A84FF; --blue-deep:#0066D6; --blue-soft:#EAF2FF;
   --green:#34C759; --orange:#FF9F0A; --red:#FF3B30;
   --c0:#8FD3E8; --c1:#A8DD92; --c2:#A8ACDF; --c3:#F0B8C4; --c4:#C9C5BE;  /* 描边色卡 */
+  --p0:#D6EDF5; --p1:#DDF3D4; --p2:#DEE0F2; --p3:#FAE3EA; --p4:#F0EEEB;  /* pastel 卡片背景 */
   --shadow:0 10px 30px rgba(0,0,0,.09);
   --ease-spring:cubic-bezier(.34,1.56,.64,1);
   --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Helvetica Neue",sans-serif;
@@ -57,50 +58,53 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 /* 标签底部连接线 */
 .foldertabs::after{content:"";position:absolute;bottom:0;left:24px;right:24px;height:1px;background:var(--line);z-index:0}
 
-/* 品牌区：logo 圆 + 标语（按手绘布局居中上方） */
+/* 品牌区：logo 圆形容器 + 标语（按手绘布局居中上方） */
 .brandzone{padding:20px 0 0;text-align:center}
-.brandzone .applogo{width:56px;height:56px;object-fit:contain;opacity:.85}
+.brandzone .logo-circle{width:64px;height:64px;border-radius:50%;background:var(--fill);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.brandzone .applogo{width:36px;height:36px;object-fit:contain;opacity:.8}
 .brandzone .brandline{margin-top:10px;font-size:13px;color:var(--ink-3);letter-spacing:.5px}
 .brandzone .brandline b{color:var(--ink);font-weight:600}
 
 #view-feed.active{display:flex;flex-direction:column;min-height:0}
 #stackSlot{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0;overflow:hidden;position:relative}
 
-/* 左右滑动箭头指示（相对 stackSlot 定位） */
-.swipe-arrow{position:absolute;top:50%;transform:translateY(-50%);font-size:22px;color:var(--ink-3);opacity:0;transition:opacity .2s;pointer-events:none;z-index:5}
-.swipe-arrow.l{left:2px}
-.swipe-arrow.r{right:2px}
-.swipe-arrow.show{opacity:.45}
+/* 左右滑动切换按钮（圆形+图标，可点击交互） */
+.swipe-arrow{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:#fff;box-shadow:0 3px 12px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;opacity:0;transition:opacity .2s,transform .15s;border:none}
+.swipe-arrow.l{left:4px}
+.swipe-arrow.r{right:4px}
+.swipe-arrow.show{opacity:1}
+.swipe-arrow:active{transform:translateY(-50%) scale(.9)}
+.swipe-arrow svg{width:16px;height:16px;stroke:var(--ink-2);stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
-/* ============ 便利贴卡（白底 + 色卡描边，内容全在框内） ============ */
-.card{position:relative;background:#fff;border:2.5px solid var(--c0);border-radius:28px;box-shadow:var(--shadow);overflow:hidden}
-.card.b0{border-color:var(--c0)}.card.b1{border-color:var(--c1)}
-.card.b2{border-color:var(--c2)}.card.b3{border-color:var(--c3)}.card.b4{border-color:var(--c4)}
-.card .inner{position:absolute;inset:0;padding:20px 20px 14px;display:flex;flex-direction:column}
-.qm{font-family:var(--serif);font-size:38px;line-height:1;color:rgba(0,0,0,.17);position:absolute;pointer-events:none}
-.qm.tl{top:12px;left:16px}
-.qm.br{right:16px;bottom:64px}
-.oneliner{font-size:20px;font-weight:700;line-height:1.5;margin-top:26px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
-.oneliner.loading{color:var(--ink-3);font-weight:400;font-size:16px}
+/* ============ 便利贴卡（纯色 pastel 背景，Health 风格，大圆角） ============ */
+.card{position:relative;background:var(--p0);border:none;border-radius:32px;box-shadow:0 8px 32px rgba(0,0,0,.06),0 2px 8px rgba(0,0,0,.04);overflow:hidden}
+.card.b0{background:var(--p0)}.card.b1{background:var(--p1)}
+.card.b2{background:var(--p2)}.card.b3{background:var(--p3)}.card.b4{background:var(--p4)}
+.card .inner{position:absolute;inset:0;padding:24px 22px 16px;display:flex;flex-direction:column}
+.qm{font-family:var(--serif);font-size:42px;line-height:1;color:rgba(0,0,0,.1);position:absolute;pointer-events:none}
+.qm.tl{top:14px;left:18px}
+.qm.br{right:18px;bottom:70px}
+.oneliner{font-size:21px;font-weight:800;line-height:1.45;margin-top:30px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word;color:rgba(0,0,0,.82);letter-spacing:-.2px}
+.oneliner.loading{color:rgba(0,0,0,.4);font-weight:400;font-size:16px}
 /* 黑胶囊播放键（卡内右下） */
-.playpill{display:inline-flex;align-items:center;gap:7px;background:var(--ink);color:#fff;border:none;border-radius:999px;padding:8px 16px;font-size:12px;cursor:pointer;font-family:var(--sans);width:fit-content}
+.playpill{display:inline-flex;align-items:center;gap:7px;background:rgba(0,0,0,.75);color:#fff;border:none;border-radius:999px;padding:9px 18px;font-size:12px;cursor:pointer;font-family:var(--sans);width:fit-content;backdrop-filter:blur(4px)}
 .playpill .pp-ic{font-size:9px}
 .pp-bars{display:inline-flex;align-items:center;gap:2px;height:11px}
 .pp-bars i{width:2.5px;background:#fff;border-radius:2px;height:4px}
 .playpill.playing .pp-bars i{animation:ppb .7s ease-in-out infinite alternate}
 @keyframes ppb{from{transform:scaleY(.4)}to{transform:scaleY(1.7)}}
 /* 摘要节选 + 渐隐遮罩 */
-.excerpt{margin-top:10px;font-size:13px;line-height:1.75;color:rgba(0,0,0,.6);max-height:70px;overflow:hidden;
+.excerpt{margin-top:12px;font-size:13.5px;line-height:1.8;color:rgba(0,0,0,.55);max-height:72px;overflow:hidden;
   -webkit-mask-image:linear-gradient(#000 35%,transparent 98%);mask-image:linear-gradient(#000 35%,transparent 98%)}
 .card .spacer{flex:1}
 .cardfoot{display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(0,0,0,.45)}
 .cardfoot .playpill{margin-left:auto}
-.kbadge{border-radius:8px;padding:2.5px 9px;font-size:10.5px;font-weight:600;color:#fff}
+.kbadge{border-radius:10px;padding:3px 10px;font-size:10.5px;font-weight:700;color:#fff;letter-spacing:.3px}
 .kbadge.idea{background:var(--orange)}.kbadge.todo{background:var(--green)}
 /* 骨架 */
-.skel{margin-top:26px}
-.skel i{display:block;height:14px;border-radius:7px;background:linear-gradient(90deg,rgba(0,0,0,.05) 25%,rgba(0,0,0,.11) 50%,rgba(0,0,0,.05) 75%);background-size:200% 100%;animation:shim 1.2s infinite;margin-bottom:10px}
-.skel .sk-t{font-size:11px;color:rgba(0,0,0,.4)}
+.skel{margin-top:30px}
+.skel i{display:block;height:14px;border-radius:7px;background:linear-gradient(90deg,rgba(0,0,0,.04) 25%,rgba(0,0,0,.09) 50%,rgba(0,0,0,.04) 75%);background-size:200% 100%;animation:shim 1.2s infinite;margin-bottom:10px}
+.skel .sk-t{font-size:11px;color:rgba(0,0,0,.35)}
 @keyframes shim{from{background-position:200% 0}to{background-position:-200% 0}}
 
 /* ============ 首页叠放堆：3 层扇形错位 + 点按翻牌（支持左右滑动） ============ */
@@ -112,7 +116,7 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 .stk.p1{z-index:2;transform:translate(-13px,-12px) rotate(-5deg) scale(.93)}
 .stk.p2{z-index:1;transform:translate(13px,-22px) rotate(4deg) scale(.88);opacity:.96}
 .stk.p0:active{transform:scale(.97)}
-.stk .peek{margin-top:30px;font-size:16px;font-weight:600;line-height:1.55;color:rgba(0,0,0,.55);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.stk .peek{margin-top:32px;font-size:17px;font-weight:700;line-height:1.5;color:rgba(0,0,0,.65);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;letter-spacing:-.2px}
 
 /* 空状态 */
 .empty{padding:50px 30px;text-align:center;color:var(--ink-3);font-size:13px;line-height:2}
@@ -158,7 +162,7 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 .nv-card .oneliner{-webkit-line-clamp:4}
 .nv-card img.nv-img{width:100%;border-radius:12px;margin-top:10px}
 /* 摘要卡 */
-.sumcard{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:14px 16px}
+.sumcard{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 4px 16px rgba(0,0,0,.04);padding:14px 16px}
 .sum-head{display:flex;align-items:center;font-size:12px;color:var(--ink-3);padding-bottom:8px}
 .sum-head .swap{margin-left:auto;background:var(--blue-soft);border:none;border-radius:999px;padding:5px 13px;font-size:11.5px;color:var(--blue);cursor:pointer;font-weight:600}
 .sum-body{font-size:14.5px;line-height:1.85;color:#3A3A40;white-space:pre-wrap;word-break:break-word}
@@ -203,9 +207,9 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 .pill.on{background:var(--blue);color:#fff;font-weight:600}
 .pill .n{opacity:.65;font-size:11px;margin-left:3px}
 .lib-item{display:flex;align-items:center;gap:13px;margin:10px 18px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px 14px;box-shadow:var(--shadow);cursor:pointer;animation:drop .35s ease}
-.li-thumb{width:46px;height:46px;border-radius:13px;background:#fff;border:2px solid var(--c0);flex:none;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:20px;color:rgba(0,0,0,.22)}
-.li-thumb.b0{border-color:var(--c0)}.li-thumb.b1{border-color:var(--c1)}
-.li-thumb.b2{border-color:var(--c2)}.li-thumb.b3{border-color:var(--c3)}.li-thumb.b4{border-color:var(--c4)}
+.li-thumb{width:46px;height:46px;border-radius:14px;background:var(--p0);border:none;flex:none;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:20px;color:rgba(0,0,0,.2)}
+.li-thumb.b0{background:var(--p0)}.li-thumb.b1{background:var(--p1)}
+.li-thumb.b2{background:var(--p2)}.li-thumb.b3{background:var(--p3)}.li-thumb.b4{background:var(--p4)}
 .lib-item .li-main{flex:1;min-width:0}
 .lib-item .li-one{font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lib-item .li-meta{margin-top:5px;display:flex;align-items:center;gap:7px;font-size:11px;color:var(--ink-3)}
@@ -229,7 +233,7 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
   <!-- ===== 灵感流（记住灵感） ===== -->
   <div class="view active" id="view-feed">
     <div class="brandzone">
-      <img class="applogo" src="assets/logo-line.png" alt="Aha">
+      <div class="logo-circle"><img class="applogo" src="assets/logo-line.png" alt="Aha"></div>
       <div class="brandline"><b>Aha</b> · 一声就记下</div>
     </div>
     <div id="stackSlot"></div>
@@ -321,14 +325,14 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 
 <script>
 /* ============================================================
-   Aha 可交互原型 v0.7
-   文件夹标签导航 · 手绘布局 · 白底色卡描边 · 真实场景文案
+   Aha 可交互原型 v0.7.1
+   文件夹标签 · pastel 纯色卡片 · 圆形箭头按钮 · 手绘布局 · 真实场景文案
    ============================================================ */
 "use strict";
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const LS_KEY="aha_v2";
 const DAY=86400000;
-const CARD_BORDER=["#8FD3E8","#A8DD92","#A8ACDF","#F0B8C4","#C9C5BE"];
+const CARD_PASTEL=["#D6EDF5","#DDF3D4","#DEE0F2","#FAE3EA","#F0EEEB"];
 
 /* ============================================================
    ★ LLM 接入配置（提示词待用户提供后填入 prompts 即可生效）
@@ -467,11 +471,20 @@ function renderFeed(){
   }).join("");
   const hasMulti=stackOrder.length>1;
   slot.innerHTML='<div class="stack" id="stackEl">'+cards+'</div>'+
-    (hasMulti?'<span class="swipe-arrow l show" id="arrowL">◁</span><span class="swipe-arrow r show" id="arrowR">▷</span>':"");
+    (hasMulti?
+      '<button class="swipe-arrow l show" onclick="swipeCard(-1)" title="上一张"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>'+
+      '<button class="swipe-arrow r show" onclick="swipeCard(1)" title="下一张"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>':"");
   bindLongPress(slot);
   bindSwipe();
 }
 function bringFront(id){syncStack(id);renderFeed()}
+/* 箭头按钮切换卡片 */
+function swipeCard(dir){
+  if(stackOrder.length<2)return;
+  if(dir>0)stackOrder.push(stackOrder.shift());        /* 下一张 */
+  else stackOrder.unshift(stackOrder.pop());          /* 上一张 */
+  renderFeed();
+}
 /* 卡片左右滑动切换（滑走的卡送到队尾 / 从队尾取回） */
 function bindSwipe(){
   const el=$("#stackEl");if(!el)return;
@@ -846,15 +859,15 @@ function openShare(id){
   const cv=$("#shareCanvas"),ctx=cv.getContext("2d"),W=1080,H=1350;
   ctx.fillStyle="#FFFFFF";ctx.fillRect(0,0,W,H);
   const m=110,cw=W-2*m,ch=cw,y=120;
-  /* 白底 + 色卡描边便利贴 */
-  ctx.fillStyle="#FFFFFF";ctx.strokeStyle=CARD_BORDER[n.border%5];ctx.lineWidth=8;
-  rr(ctx,m,y,cw,ch,56);ctx.fill();ctx.stroke();
+  /* pastel 纯色便利贴 */
+  ctx.fillStyle=CARD_PASTEL[n.border%5];
+  rr(ctx,m,y,cw,ch,56);ctx.fill();
   /* 引号（框内） */
-  ctx.fillStyle="rgba(0,0,0,.15)";ctx.font='110px "Songti SC",serif';
+  ctx.fillStyle="rgba(0,0,0,.1)";ctx.font='110px "Songti SC",serif';
   ctx.fillText("“",m+40,y+120);
   ctx.textAlign="right";ctx.fillText("”",m+cw-40,y+ch-150);ctx.textAlign="left";
   /* 一句话概括（框内） */
-  ctx.fillStyle="#111114";ctx.font='700 54px -apple-system,"PingFang SC",sans-serif';
+  ctx.fillStyle="rgba(0,0,0,.82)";ctx.font='800 54px -apple-system,"PingFang SC",sans-serif';
   wrapText(ctx,n.oneLiner||n.text||"",m+56,y+205,cw-112,84);
   /* 黑胶囊播放键（卡内右下） */
   const audio=n.assets.find(a=>a.kind==="audio");
