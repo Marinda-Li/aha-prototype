@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Aha · 一声就记下</title>
-<link rel="icon" href="assets/logo.png">
+<link rel="icon" href="assets/logo-line.png">
 <style>
-/* ============ v0.5 · pastel 色卡 + 居中叠放 + 文件夹标签切换 ============ */
+/* ============ v0.6 · 白底色卡描边 + 居中线稿 logo + 分段控件 + 滑动切卡 ============ */
 :root{
   --bg:#FFFFFF; --ink:#111114; --ink-2:#6B6B72; --ink-3:#AEAEB6;
   --fill:#F2F2F5; --line:#ECECF0;
   --blue:#0A84FF; --blue-deep:#0066D6; --blue-soft:#EAF2FF;
   --green:#34C759; --orange:#FF9F0A; --red:#FF3B30;
-  --c0:#CDEBF1; --c1:#DEF1D0; --c2:#CBCEEA; --c3:#F8E5E5; --c4:#F8F6F5;  /* 用户色卡 */
+  --c0:#8FD3E8; --c1:#A8DD92; --c2:#A8ACDF; --c3:#F0B8C4; --c4:#C9C5BE;  /* 描边色卡 */
   --shadow:0 10px 30px rgba(0,0,0,.09);
   --ease-spring:cubic-bezier(.34,1.56,.64,1);
   --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Helvetica Neue",sans-serif;
@@ -31,27 +31,28 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 .view::-webkit-scrollbar{display:none}
 .view.active{display:block}
 
-/* ============ 顶部：文件夹标签切换（左=记住灵感 · 右=往期记录，一前一后） ============ */
-.apphead{display:flex;align-items:center;padding:16px 18px 0;gap:12px}
-.apphead .logo{height:30px;border-radius:8px}
-.foldertabs{flex:1;display:flex;justify-content:center;align-items:center}
-.ftab{border:none;background:var(--fill);color:var(--ink-2);font-size:13px;font-weight:500;padding:11px 20px;cursor:pointer;border-radius:14px;position:relative;transition:all .25s var(--ease-spring);font-family:var(--sans);transform:scale(.96)}
-.ftab+.ftab{margin-left:-12px}
-.ftab.on{background:#fff;color:var(--ink);font-weight:700;z-index:2;transform:scale(1.04);box-shadow:0 6px 18px rgba(0,0,0,.1)}
+/* ============ 顶部：连体分段控件 + 居中线稿 logo ============ */
+.apphead{display:flex;flex-direction:column;align-items:center;padding:14px 18px 0;gap:12px}
+.seghead{display:flex;background:var(--fill);border-radius:999px;padding:4px;position:relative;width:min(84%,300px)}
+.seghead .thumb{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);background:#fff;border-radius:999px;box-shadow:0 3px 12px rgba(0,0,0,.12);transition:transform .32s var(--ease-spring)}
+.seghead.right .thumb{transform:translateX(100%)}
+.ftab{flex:1;border:none;background:none;color:var(--ink-2);font-size:13.5px;font-weight:500;padding:10px 6px;cursor:pointer;border-radius:999px;position:relative;z-index:1;transition:color .25s;font-family:var(--sans)}
+.ftab.on{color:var(--ink);font-weight:700}
 .ftab .cnt{background:var(--blue);color:#fff;font-size:9.5px;min-width:17px;height:17px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;padding:0 4px;font-weight:700;margin-left:5px;vertical-align:1px}
+.applogo{width:40px;height:40px;object-fit:contain;opacity:.85}
 
 /* 问候区 */
-.greet{padding:12px 26px 2px;text-align:center}
+.greet{padding:14px 26px 2px;text-align:center}
 .greet .g-main{font-size:22px;font-weight:700;letter-spacing:.5px}
 .greet .g-main::before{content:"“"}.greet .g-main::after{content:"”"}
 .greet .g-sub{margin-top:6px;font-size:12.5px;color:var(--ink-3)}
 #view-feed.active{display:flex;flex-direction:column}
-#stackSlot{flex:1;display:flex;align-items:center;justify-content:center;width:100%;padding-bottom:12px}
+#stackSlot{flex:1;display:flex;align-items:flex-end;justify-content:center;width:100%;padding-bottom:26px}
 
-/* ============ 便利贴卡（pastel 纯色填充，全在框内） ============ */
-.card{position:relative;background:var(--c0);border:none;border-radius:28px;box-shadow:var(--shadow);overflow:hidden}
-.card.b0{background:var(--c0)}.card.b1{background:var(--c1)}
-.card.b2{background:var(--c2)}.card.b3{background:var(--c3)}.card.b4{background:var(--c4)}
+/* ============ 便利贴卡（白底 + 色卡描边，内容全在框内） ============ */
+.card{position:relative;background:#fff;border:2.5px solid var(--c0);border-radius:28px;box-shadow:var(--shadow);overflow:hidden}
+.card.b0{border-color:var(--c0)}.card.b1{border-color:var(--c1)}
+.card.b2{border-color:var(--c2)}.card.b3{border-color:var(--c3)}.card.b4{border-color:var(--c4)}
 .card .inner{position:absolute;inset:0;padding:20px 20px 14px;display:flex;flex-direction:column}
 .qm{font-family:var(--serif);font-size:38px;line-height:1;color:rgba(0,0,0,.17);position:absolute;pointer-events:none}
 .qm.tl{top:12px;left:16px}
@@ -79,14 +80,22 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 .skel .sk-t{font-size:11px;color:rgba(0,0,0,.4)}
 @keyframes shim{from{background-position:200% 0}to{background-position:-200% 0}}
 
-/* ============ 首页叠放堆：居中 + 扇形错位不溢出 + 点哪张哪张到最前 ============ */
-.stack{position:relative;width:min(76%,300px);aspect-ratio:1/1;margin:0 auto}
-.stk{position:absolute;inset:0;cursor:pointer;transition:transform .38s var(--ease-spring),opacity .3s}
-.stk.p0{z-index:3;transform:none}
-.stk.p1{z-index:2;transform:translate(-13px,-12px) rotate(-5deg) scale(.93)}
-.stk.p2{z-index:1;transform:translate(13px,-22px) rotate(4deg) scale(.88);opacity:.96}
-.stk.p0:active{transform:scale(.97)}
-.stk .peek{margin-top:30px;font-size:16px;font-weight:600;line-height:1.55;color:rgba(0,0,0,.6);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+/* ============ 首页叠放堆：前 2 张露内容 + 更深层半透明空卡 + 左右滑动切换 ============ */
+.stack{position:relative;width:min(78%,304px);aspect-ratio:1/1;margin:0 auto;touch-action:pan-y}
+.stk{position:absolute;inset:0;cursor:pointer;transition:transform .4s var(--ease-spring),opacity .32s}
+.stk.drag{transition:none}
+.stk.p0{z-index:4;transform:none}
+.stk.p1{z-index:3;transform:translate(-16px,-14px) rotate(-4.5deg) scale(.95)}
+.stk.p2{z-index:2;transform:translate(16px,-26px) rotate(4deg) scale(.91);opacity:.9}
+.stk.p3{z-index:1;transform:translate(0,-38px) scale(.87);opacity:.42}
+.stk.p4{z-index:0;transform:translate(0,-48px) scale(.83);opacity:.22}
+.stk.p3 .inner,.stk.p4 .inner{visibility:hidden}
+.stk.p0:active{transform:scale(.975)}
+.stk .peek{margin-top:30px;font-size:16px;font-weight:600;line-height:1.55;color:rgba(0,0,0,.55);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.swipehint{text-align:center;font-size:11px;color:var(--ink-3);margin-top:14px;letter-spacing:.5px}
+.dots{display:flex;justify-content:center;gap:6px;margin-top:12px}
+.dots i{width:6px;height:6px;border-radius:50%;background:var(--line);transition:all .25s}
+.dots i.on{background:var(--ink);width:18px;border-radius:3px}
 
 /* 空状态 */
 .empty{padding:50px 30px;text-align:center;color:var(--ink-3);font-size:13px;line-height:2}
@@ -95,8 +104,8 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 /* ============ 底部输入条 ============ */
 .inputbar{flex:none;display:flex;align-items:center;gap:12px;padding:12px 16px calc(14px + env(safe-area-inset-bottom));background:var(--bg)}
 .kbd{width:46px;height:46px;border-radius:50%;background:var(--fill);border:none;font-size:18px;color:var(--ink);cursor:pointer;flex:none;touch-action:none;user-select:none;-webkit-user-select:none}
-.talk{flex:1;height:52px;border-radius:999px;background:var(--blue);border:none;font-size:15.5px;color:#fff;font-weight:600;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;font-family:var(--sans);letter-spacing:1px;transition:background .15s;box-shadow:0 6px 18px rgba(10,132,255,.28)}
-.talk.pressing{background:var(--blue-deep)}
+.talk{flex:1;height:52px;border-radius:999px;background:#fff;border:none;font-size:15.5px;color:var(--ink);font-weight:700;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;font-family:var(--sans);letter-spacing:1px;transition:all .15s;box-shadow:0 4px 16px rgba(0,0,0,.13),0 1px 3px rgba(0,0,0,.08)}
+.talk.pressing{background:var(--ink);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 
 /* ============ 录音浮层 ============ */
 .rec-ov{position:absolute;inset:0;background:rgba(15,15,20,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:none;z-index:40}
@@ -177,9 +186,9 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 .pill.on{background:var(--blue);color:#fff;font-weight:600}
 .pill .n{opacity:.65;font-size:11px;margin-left:3px}
 .lib-item{display:flex;align-items:center;gap:13px;margin:10px 18px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px 14px;box-shadow:var(--shadow);cursor:pointer;animation:drop .35s ease}
-.li-thumb{width:46px;height:46px;border-radius:13px;background:var(--c0);border:none;flex:none;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:20px;color:rgba(0,0,0,.22)}
-.li-thumb.b0{background:var(--c0)}.li-thumb.b1{background:var(--c1)}
-.li-thumb.b2{background:var(--c2)}.li-thumb.b3{background:var(--c3)}.li-thumb.b4{background:var(--c4)}
+.li-thumb{width:46px;height:46px;border-radius:13px;background:#fff;border:2px solid var(--c0);flex:none;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:20px;color:rgba(0,0,0,.22)}
+.li-thumb.b0{border-color:var(--c0)}.li-thumb.b1{border-color:var(--c1)}
+.li-thumb.b2{border-color:var(--c2)}.li-thumb.b3{border-color:var(--c3)}.li-thumb.b4{border-color:var(--c4)}
 .lib-item .li-main{flex:1;min-width:0}
 .lib-item .li-one{font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lib-item .li-meta{margin-top:5px;display:flex;align-items:center;gap:7px;font-size:11px;color:var(--ink-3)}
@@ -194,13 +203,14 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 <body>
 <div class="phone" id="phone">
 
-  <!-- ===== 共享头部：logo + 文件夹标签切换 ===== -->
+  <!-- ===== 共享头部：连体分段控件 + 居中线稿 logo ===== -->
   <div class="apphead">
-    <img class="logo" src="assets/logo.png" alt="Aha">
-    <div class="foldertabs">
+    <div class="seghead" id="segHead">
+      <div class="thumb"></div>
       <button class="ftab on" id="ftFeed" onclick="switchTab('feed')">记住灵感</button>
       <button class="ftab" id="ftLib" onclick="switchTab('lib')">往期记录<span class="cnt" id="noteCnt">0</span></button>
     </div>
+    <img class="applogo" src="assets/logo-line.png" alt="Aha">
   </div>
 
   <!-- ===== 灵感流（记住灵感） ===== -->
@@ -298,14 +308,14 @@ body{font-family:var(--sans);background:#E9E9EE;display:flex;align-items:center;
 
 <script>
 /* ============================================================
-   Aha 可交互原型 v0.5
-   pastel 色卡 · 居中扇形叠放 · 文件夹标签切换（记住灵感 / 往期记录）
+   Aha 可交互原型 v0.6
+   白底色卡描边 · 居中线稿 logo · 分段控件切换 · 卡片左右滑动
    ============================================================ */
 "use strict";
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const LS_KEY="aha_v2";
 const DAY=86400000;
-const CARD_BG=["#CDEBF1","#DEF1D0","#CBCEEA","#F8E5E5","#F8F6F5"];
+const CARD_BORDER=["#8FD3E8","#A8DD92","#A8ACDF","#F0B8C4","#C9C5BE"];
 
 /* ============================================================
    ★ LLM 接入配置（提示词待用户提供后填入 prompts 即可生效）
@@ -405,14 +415,15 @@ function fmtDur(ms){const s=Math.round(ms/1000);return Math.floor(s/60)+":"+Stri
 let toastT=null;
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("on"),2200)}
 
-/* ============ 首页叠放堆：最近 3 张，点哪张哪张到最前 ============ */
+/* ============ 首页叠放堆：前 2 张露内容 + 后面半透明空卡 + 左右滑动切换 ============ */
+const STACK_MAX=5;   // 最多渲染 5 层：p0/p1/p2 露内容，p3/p4 半透明空卡
 let stackOrder=[];   // id 数组，0=最前
 function syncStack(newFrontId){
-  const recent=[...S.notes].sort((a,b)=>b.createdAt-a.createdAt).slice(0,3).map(n=>n.id);
+  const recent=[...S.notes].sort((a,b)=>b.createdAt-a.createdAt).slice(0,STACK_MAX).map(n=>n.id);
   stackOrder=stackOrder.filter(id=>recent.includes(id));
   recent.forEach(id=>{if(!stackOrder.includes(id))stackOrder.push(id)});
   if(newFrontId){stackOrder=[newFrontId,...stackOrder.filter(id=>id!==newFrontId)]}
-  stackOrder=stackOrder.slice(0,3);
+  stackOrder=stackOrder.slice(0,STACK_MAX);
 }
 function cardInnerHTML(n){
   if(n.transcribing){
@@ -435,15 +446,57 @@ function renderFeed(){
   if(!stackOrder.length){
     slot.innerHTML='<div class="empty"><img src="assets/empty.png"><br>还没有随记<br>按住下面「按住说话」，啊一声试试</div>';return;
   }
-  slot.innerHTML='<div class="stack">'+stackOrder.map((id,pos)=>{
+  const cards=stackOrder.map((id,pos)=>{
     const n=S.notes.find(x=>x.id===id);if(!n)return "";
     const cls="stk card b"+n.border+" p"+pos;
     if(pos===0)return '<div class="'+cls+'" data-nid="'+n.id+'" onclick="openNoteView(\''+n.id+'\',\'view\')"><div class="inner">'+cardInnerHTML(n)+'</div></div>';
-    return '<div class="'+cls+'" data-nid="'+n.id+'" onclick="bringFront(\''+n.id+'\')"><div class="inner"><div class="qm tl">“</div><div class="peek">'+esc(n.oneLiner||"")+'</div></div></div>';
-  }).join("")+'</div>';
+    if(pos<=2)return '<div class="'+cls+'" data-nid="'+n.id+'" onclick="bringFront(\''+n.id+'\')"><div class="inner"><div class="qm tl">“</div><div class="peek">'+esc(n.oneLiner||"")+'</div></div></div>';
+    return '<div class="'+cls+'"><div class="inner"></div></div>';   /* 深层：不露内容 */
+  }).join("");
+  const dots=stackOrder.map((id,pos)=>'<i class="'+(pos===0?"on":"")+'"></i>').join("");
+  slot.innerHTML='<div><div class="stack" id="stackEl">'+cards+'</div>'+
+    '<div class="dots">'+dots+'</div>'+
+    '<div class="swipehint">← 左右滑动切换 · 点击查看详情 →</div></div>';
   bindLongPress(slot);
+  bindSwipe();
 }
 function bringFront(id){syncStack(id);renderFeed()}
+/* 卡片左右滑动切换（滑走的卡送到队尾 / 从队尾取回） */
+function bindSwipe(){
+  const el=$("#stackEl");if(!el)return;
+  const front=el.querySelector(".stk.p0");if(!front||stackOrder.length<2)return;
+  let x0=0,y0=0,dx=0,dragging=false,decided=false;
+  front.addEventListener("pointerdown",e=>{
+    if(e.target.closest(".playpill"))return;
+    x0=e.clientX;y0=e.clientY;dragging=true;decided=false;dx=0;
+    front.setPointerCapture(e.pointerId);
+  });
+  front.addEventListener("pointermove",e=>{
+    if(!dragging)return;
+    dx=e.clientX-x0;
+    const dy=e.clientY-y0;
+    if(!decided){
+      if(Math.abs(dx)<8&&Math.abs(dy)<8)return;
+      decided=true;
+      if(Math.abs(dy)>Math.abs(dx)){dragging=false;return}   /* 纵向滑动交给页面 */
+      front.classList.add("drag");
+    }
+    front.style.transform="translateX("+dx+"px) rotate("+(dx/22).toFixed(2)+"deg)";
+    front.style.opacity=String(Math.max(.35,1-Math.abs(dx)/380));
+  });
+  const end=()=>{
+    if(!dragging)return;
+    dragging=false;front.classList.remove("drag");
+    front.style.transform="";front.style.opacity="";
+    if(Math.abs(dx)>72){
+      if(dx<0)stackOrder.push(stackOrder.shift());        /* 左滑：看下一张 */
+      else stackOrder.unshift(stackOrder.pop());          /* 右滑：回上一张 */
+      renderFeed();
+    }
+  };
+  front.addEventListener("pointerup",end);
+  front.addEventListener("pointercancel",end);
+}
 
 /* ============ 灵感录 ============ */
 let libFilter="all";
@@ -782,11 +835,11 @@ function openShare(id){
   const cv=$("#shareCanvas"),ctx=cv.getContext("2d"),W=1080,H=1350;
   ctx.fillStyle="#FFFFFF";ctx.fillRect(0,0,W,H);
   const m=110,cw=W-2*m,ch=cw,y=120;
-  /* pastel 纯色便利贴 */
-  ctx.fillStyle=CARD_BG[n.border%5];
-  rr(ctx,m,y,cw,ch,56);ctx.fill();
+  /* 白底 + 色卡描边便利贴 */
+  ctx.fillStyle="#FFFFFF";ctx.strokeStyle=CARD_BORDER[n.border%5];ctx.lineWidth=8;
+  rr(ctx,m,y,cw,ch,56);ctx.fill();ctx.stroke();
   /* 引号（框内） */
-  ctx.fillStyle="rgba(0,0,0,.16)";ctx.font='110px "Songti SC",serif';
+  ctx.fillStyle="rgba(0,0,0,.15)";ctx.font='110px "Songti SC",serif';
   ctx.fillText("“",m+40,y+120);
   ctx.textAlign="right";ctx.fillText("”",m+cw-40,y+ch-150);ctx.textAlign="left";
   /* 一句话概括（框内） */
@@ -843,6 +896,7 @@ function switchTab(v){
   $("#view-"+v).classList.add("active");
   $("#ftFeed").classList.toggle("on",v==="feed");
   $("#ftLib").classList.toggle("on",v==="lib");
+  $("#segHead").classList.toggle("right",v==="lib");
   $("#inputbar").style.visibility=v==="feed"?"visible":"hidden";
   if(v==="lib")renderLib();
 }
