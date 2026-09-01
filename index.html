@@ -1466,7 +1466,11 @@ function renderTagRow(){
 let heroFill='#6192FC';
 function drawHeroShape(){
   const shape=document.getElementById('heroShape');
-  const W=Math.round(shape.getBoundingClientRect().width)||348, H=192;
+  const hero=document.getElementById('noteHero');
+  // 用 clientWidth（布局宽度），不能用 getBoundingClientRect——
+  // 后者会受 expandIn 动画的 scale(.9) 影响，导致 viewBox 与实际尺寸不符，
+  // preserveAspectRatio 默认 meet 会把图形水平居中留边，按钮看起来位移。
+  const W=hero.clientWidth||348, H=192;
   const r=22, c2=W-19-17, c1=W-63-17;      // 与 .hero-act 的 right 值对应
   shape.setAttribute('viewBox',`0 0 ${W} ${H}`);
   shape.innerHTML=
