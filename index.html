@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@200;300;400;500;700;900&family=Noto+Serif+SC:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
 <style>
   :root{
     --paper:#EFF0F4;      /* 底色 */
@@ -455,6 +456,12 @@
     color:#fff;
   }
   .note-hero.light h3{color:var(--ink)}
+  /* 图片便签：卡内直接展示 */
+  .hero-img{
+    position:absolute;left:15px;right:15px;bottom:66px;z-index:2;
+    height:84px;object-fit:cover;border-radius:13px;
+    box-shadow:0 5px 12px rgba(17,53,139,.14);
+  }
   /* 底部：白色波形胶囊 + 独立深色圆钮 */
   .voice-bar{
     position:absolute;left:14px;right:14px;bottom:13px;z-index:2;
@@ -661,8 +668,14 @@
   .calendar-pop[hidden]{display:none}
   @keyframes calIn{from{opacity:0;transform:scale(.94) translateY(-5px)}to{opacity:1;transform:none}}
   .cal-head{display:flex;align-items:center;margin-bottom:11px}
-  .cal-head strong{flex:1;font-size:13px;color:var(--ink)}
+  .cal-head strong{flex:1;font-size:13px;color:var(--ink);text-align:center}
   .cal-close{border:none;background:none;color:var(--sub);font-size:18px;cursor:pointer}
+  .cal-nav{
+    width:22px;height:22px;border:none;border-radius:7px;cursor:pointer;
+    background:rgba(97,146,252,.13);color:var(--navy);
+    font-size:14px;line-height:1;display:grid;place-items:center;transition:.18s;
+  }
+  .cal-nav:hover{background:rgba(97,146,252,.24)}
   .cal-week,.cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
   .cal-week span{font-size:9px;color:var(--sub);padding-bottom:3px}
   .cal-day{
@@ -731,6 +744,23 @@
     transition:.3s;
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* 处理中状态条（转写/生成卡片时） */
+  .busy-bar{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    z-index:70;display:flex;align-items:center;gap:9px;
+    padding:12px 18px;border-radius:999px;
+    background:rgba(20,22,28,.9);color:#fff;
+    font-size:11px;font-weight:700;letter-spacing:.5px;
+    box-shadow:0 12px 28px rgba(17,53,139,.3);
+  }
+  .busy-bar[hidden]{display:none}
+  .busy-bar .spin{
+    width:14px;height:14px;border-radius:50%;
+    border:2px solid rgba(255,255,255,.28);border-top-color:#C7EF66;
+    animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
 
   /* 上滑取消区（微信语音同款心智） */
   .cancel-zone{
@@ -863,6 +893,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2v10.4M12 3.2 8.4 6.9M12 3.2l3.6 3.7M5.2 13.4v5.2a2 2 0 0 0 2 2h9.6a2 2 0 0 0 2-2v-5.2"/></svg>
           </button>
           <h3 id="noteHeadline"></h3>
+          <img class="hero-img" id="heroImg" alt="" hidden>
           <div class="voice-bar" id="voiceBar">
             <div class="wave-pill">
               <div class="wave" id="wave"></div>
@@ -919,7 +950,12 @@
   </main>
 
   <div class="calendar-pop" id="calendarPop" hidden>
-    <div class="cal-head"><strong>2026年8月</strong><button class="cal-close" id="calClose" aria-label="关闭">×</button></div>
+    <div class="cal-head">
+      <button class="cal-nav" id="calPrev" aria-label="上个月">‹</button>
+      <strong></strong>
+      <button class="cal-nav" id="calNext" aria-label="下个月">›</button>
+      <button class="cal-close" id="calClose" aria-label="关闭">×</button>
+    </div>
     <div class="cal-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
     <div class="cal-days" id="calDays"></div>
   </div>
@@ -957,6 +993,11 @@
   <input type="file" id="filePick" accept="image/*" hidden>
   <input type="file" id="audioPick" accept="audio/*" hidden>
 
+  <!-- 处理中状态条 -->
+  <div class="busy-bar" id="busyBar" hidden>
+    <i class="spin"></i><span>处理中…</span>
+  </div>
+
   <!-- 上滑取消区 + 长录提示（按住说话时出现） -->
   <div class="cancel-zone" id="cancelZone"><span class="cz-ico">✕</span><span class="cz-txt">上滑取消</span></div>
   <div class="rec-tip" id="recTip"></div>
@@ -968,16 +1009,16 @@
 /* ---------- 数据 ---------- */
 /* 卡片正文 = 原始 ASR 转录（未整理口语），与详情页「看原文」一致 */
 const CARDS=[
-  {title:'整理一份 AI 名词备选库，收集 20 个近期热门词条',
+  {key:'2026-08-29|昨天 11:31',title:'整理一份 AI 名词备选库，收集 20 个近期热门词条',
    text:'嗯 就是提前先搜集一批 就现在热度比较高的那些 AI 的专业词汇 大概二十个吧 然后每一个都配一句 就是通俗一点的解释 存成一个素材库 这样后面每天要推送的时候 就不用临时再去找内容了',
    time:'昨天 11:31',tag:'✓ Todo',tagCls:'todo',rot:-5,ring:'#DFF6A4'},
-  {title:'帮我点一杯最近的瑞幸咖啡，要自取 ☕',
+  {key:'2026-08-30|今天 09:12',title:'帮我点一杯最近的瑞幸咖啡，要自取 ☕',
    img:'assets/card-cafe-real.png',
    time:'今天 09:12',tag:'# 生活',rot:4,ring:'#AEC7FD'},
-  {title:'做一个 AI 生成包豪斯风格住宅的 agent',
+  {key:'2026-08-27|周四 16:40',title:'做一个 AI 生成包豪斯风格住宅的 agent',
    text:'我想做一个 agent 就是你输入场地条件 还有面积 它就能出包豪斯风格的住宅方案 平面 立面都要 呃 但关键是 你得把包豪斯那一套形式逻辑喂进去 不然的话 生成出来的东西就只是 贴一个白墙 加几个横向长窗',
    time:'周四 16:40',tag:'# 灵感',rot:-3,ring:'#6274AC'},
-  {title:'周末去老城区拍一组街道尺度的照片',
+  {key:'2026-08-20|8/20 14:05',title:'周末去老城区拍一组街道尺度的照片',
    text:'想拍一组不同宽度街道的对比 从两米的那种巷子 一直到二十米的主干道 记录一下人在里面的行为差异 以后做空间分析的时候 这是很好的参照素材',
    time:'8/20 14:05',tag:'# 生活',rot:6,ring:'#C7EF66'},
 ];
@@ -1066,32 +1107,39 @@ const GROUPS={
 /* ---------- 扇形循环轮播 ---------- */
 const carousel=document.getElementById('carousel');
 const dotsBox=document.getElementById('dots');
-const N=CARDS.length;
+let N=CARDS.length;        // 新增便签后会变化
 let cur=0;                 // 连续索引（可为任意整数，取模得当前卡）
 const STEP=132;            // 相邻卡片水平间距
 
-// 建卡
-CARDS.forEach((c,i)=>{
-  const el=document.createElement('article');
-  el.className='c-card';
-  el.style.setProperty('--ring',c.ring);
-  el.innerHTML=`
-    <span class="q-open">“</span>
-    <h3>${c.title}</h3>
-    <div class="summary">${c.img?`<img src="${c.img}" alt="">`:c.text}</div>
-    ${c.img?'':'<span class="q-close">”</span>'}
-    <div class="card-foot">
-      <span class="time">${c.time}</span>
-      <span class="chip ${c.tagCls||''}">${c.tag}</span>
-      <button class="play" aria-label="播放语音">
-        <svg viewBox="0 0 24 24"><path d="M6 4.5v15l13-7.5z"/></svg>
-      </button>
-    </div>`;
-  carousel.appendChild(el);
-});
-dotsBox.innerHTML=CARDS.map(()=>'<i></i>').join('');
-const dots=[...dotsBox.children];
-const cardEls=[...carousel.children];
+// 建卡（新便签生成后可整体重建）
+let cardEls=[],dots=[];
+function buildCarousel(){
+  carousel.innerHTML='';
+  CARDS.forEach((c,i)=>{
+    const el=document.createElement('article');
+    el.className='c-card';
+    el.style.setProperty('--ring',c.ring);
+    el.innerHTML=`
+      <span class="q-open">“</span>
+      <h3>${c.title}</h3>
+      <div class="summary">${c.img?`<img src="${c.img}" alt="">`:c.text}</div>
+      ${c.img?'':'<span class="q-close">”</span>'}
+      <div class="card-foot">
+        <span class="time">${c.time}</span>
+        <span class="chip ${c.tagCls||''}">${c.tag}</span>
+        <button class="play" aria-label="播放语音">
+          <svg viewBox="0 0 24 24"><path d="M6 4.5v15l13-7.5z"/></svg>
+        </button>
+      </div>`;
+    carousel.appendChild(el);
+  });
+  dotsBox.innerHTML=CARDS.map(()=>'<i></i>').join('');
+  dots=[...dotsBox.children];
+  cardEls=[...carousel.children];
+  N=CARDS.length;
+  bindCards();
+}
+buildCarousel();
 
 // 最短循环距离：d ∈ (-N/2, N/2]
 function circ(d){ d%=N; if(d>N/2)d-=N; if(d<=-N/2)d+=N; return d; }
@@ -1138,11 +1186,13 @@ function endDrag(){
 carousel.addEventListener('pointerup',endDrag);
 carousel.addEventListener('pointercancel',endDrag);
 /* 点中轴卡片 → 进入便签详情（拖拽后不触发） */
-const CARD_KEY=['2026-08-29|昨天 11:31','2026-08-30|今天 09:12','2026-08-27|周四 16:40','2026-08-20|8/20 14:05'];
-cardEls.forEach((el,i)=>el.addEventListener('click',e=>{
-  if(e.target.closest('.play')||Math.abs(off)>.12)return;
-  openNote(CARD_KEY[i],'capture');
-}));
+function bindCards(){
+  cardEls.forEach((el,i)=>el.addEventListener('click',e=>{
+    if(e.target.closest('.play')||Math.abs(off)>.12)return;
+    const c=CARDS[i];
+    openNote(c.key,'capture');
+  }));
+}
 
 /* ---------- 顶部切换 ---------- */
 const tabs=document.querySelectorAll('.tab');
@@ -1168,9 +1218,11 @@ const dayTitle=document.getElementById('dayTitle');
 const dayCount=document.getElementById('dayCount');
 const dayNoteList=document.getElementById('dayNoteList');
 const WEEK_NAMES=['周一','周二','周三','周四','周五','周六','周日'];
-const BASE_WEEK='2026-08-24';
-let selectedDate='2026-08-30';
+const TODAY=isoDate(new Date());          // 真实今天
+const BASE_WEEK=TODAY;                    // "本周" 以今天为基准
+let selectedDate=TODAY;
 let weekAnchor=parseISO(selectedDate);
+let calMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);  // 日历当前月
 
 function parseISO(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d,12)}
 function isoDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
@@ -1281,19 +1333,26 @@ function selectDate(date){
   renderDay(date);
 }
 function renderCalendar(){
-  const year=2026,month=7;
+  const year=calMonth.getFullYear(),month=calMonth.getMonth();
+  document.querySelector('.cal-head strong').textContent=`${year}年${month+1}月`;
   const first=(new Date(year,month,1).getDay()+6)%7;
   const total=new Date(year,month+1,0).getDate();
-  const noteDates=new Set(HISTORY.map(x=>Number(x.date.slice(-2))));
+  const noteDates=new Set(HISTORY.filter(x=>x.date.startsWith(`${year}-${String(month+1).padStart(2,'0')}`)).map(x=>Number(x.date.slice(-2))));
   const cells=[];
   for(let i=0;i<first;i++)cells.push('<button class="cal-day muted" disabled></button>');
   for(let d=1;d<=total;d++){
-    const date=`2026-08-${String(d).padStart(2,'0')}`;
+    const date=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     cells.push(`<button class="cal-day ${noteDates.has(d)?'has-note':''} ${selectedDate===date?'selected':''}" data-date="${date}">${d}</button>`);
   }
   calDays.innerHTML=cells.join('');
   calDays.querySelectorAll('[data-date]').forEach(b=>b.addEventListener('click',()=>selectDate(b.dataset.date)));
 }
+document.getElementById('calPrev').addEventListener('click',()=>{
+  calMonth=new Date(calMonth.getFullYear(),calMonth.getMonth()-1,1);renderCalendar();
+});
+document.getElementById('calNext').addEventListener('click',()=>{
+  calMonth=new Date(calMonth.getFullYear(),calMonth.getMonth()+1,1);renderCalendar();
+});
 calendarBtn.addEventListener('click',e=>{e.stopPropagation();calendarPop.hidden=!calendarPop.hidden});
 document.getElementById('calClose').addEventListener('click',()=>calendarPop.hidden=true);
 document.addEventListener('click',e=>{if(!calendarPop.hidden&&!calendarPop.contains(e.target)&&!calendarBtn.contains(e.target))calendarPop.hidden=true});
@@ -1362,12 +1421,16 @@ function openNote(key,from,projectName){
   document.getElementById('heroGroup').textContent=n.group;
   document.getElementById('heroTime').textContent=`语音记录 · ${n.dur}`;
   heroFill=g.bg;
-  // 波形柱：由文本长度派生的稳定伪随机高度
+  // 波形柱：真实便签用录音的真实峰值，示例数据用文本派生的稳定伪随机
   const bars=34,total=n.raw.length;
   wave.innerHTML=Array.from({length:bars},(_,i)=>{
-    const h=26+Math.abs(Math.sin(i*1.7+total*.13))*62;
-    return `<i style="--h:${h.toFixed(0)}%;animation-delay:${i*38}ms"></i>`;
+    const h=n.bars?n.bars[i]:Math.round(26+Math.abs(Math.sin(i*1.7+total*.13))*62);
+    return `<i style="--h:${h}%;animation-delay:${i*38}ms"></i>`;
   }).join('');
+  // 图片便签：隐藏语音条，在卡里直接展示图片
+  const heroImg=document.getElementById('heroImg');
+  voiceBar.hidden=!!n.img;
+  if(n.img){heroImg.src=n.img;heroImg.hidden=false}else{heroImg.hidden=true}
   renderSegs();
   renderTagRow();
   kwList.innerHTML=n.kw.map(k=>`<span>${k}</span>`).join('');
@@ -1420,8 +1483,20 @@ document.getElementById('heroFav').addEventListener('click',e=>{
   e.currentTarget.classList.toggle('on');
   e.currentTarget.textContent=e.currentTarget.classList.contains('on')?'♥':'♡';
 });
-function stopPlay(){playing=false;voiceBar.classList.remove('playing');voicePlay.classList.remove('playing')}
+/* 真实播放：有原音就用 <audio>，没有就只跑动画 */
+let audioEl=null;
+function stopPlay(){
+  playing=false;voiceBar.classList.remove('playing');voicePlay.classList.remove('playing');
+  if(audioEl){audioEl.pause();audioEl.currentTime=0;audioEl=null}
+}
 voicePlay.addEventListener('click',()=>{
+  const url=curNote?.audioUrl;
+  if(url){
+    if(playing){stopPlay();return}
+    audioEl=new Audio(url);
+    audioEl.onended=()=>stopPlay();
+    audioEl.play().catch(()=>flash('无法播放原音'));
+  }
   playing=!playing;
   voiceBar.classList.toggle('playing',playing);
   voicePlay.classList.toggle('playing',playing);
@@ -1570,7 +1645,46 @@ const cancelZone=document.getElementById('cancelZone');
 const recTip=document.getElementById('recTip');
 let holdT=null,startY=0,willCancel=false,recSec=0,recTimer=null,tip40=null;
 
-talk.addEventListener('pointerdown',e=>{
+/* 兜底转写：浏览器内置语音识别（与录音并行跑，腾讯云 ASR 不可用时顶上） */
+let wsRec=null,wsRaw='';
+function startWebSpeech(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR)return;
+  try{
+    wsRec=new SR();wsRec.lang='zh-CN';wsRec.continuous=true;wsRec.interimResults=true;
+    wsRaw='';
+    wsRec.onresult=ev=>{let t='';for(const r of ev.results)t+=r[0].transcript;wsRaw=t};
+    wsRec.onerror=()=>{};
+    wsRec.start();
+  }catch{wsRec=null}
+}
+function stopWebSpeech(){try{wsRec&&wsRec.stop()}catch{};wsRec=null}
+
+/* 真实录音（MediaRecorder） */
+let rec=null,recStream=null,recChunks=[];
+async function startRec(){
+  try{
+    recStream=await navigator.mediaDevices.getUserMedia({audio:true});
+  }catch{
+    flash('无法访问麦克风');return false;
+  }
+  startWebSpeech();
+  recChunks=[];
+  const mime=['audio/webm;codecs=opus','audio/webm','audio/mp4'].find(m=>MediaRecorder.isTypeSupported?.(m));
+  rec=new MediaRecorder(recStream,mime?{mimeType:mime}:undefined);
+  rec.ondataavailable=e=>{if(e.data.size)recChunks.push(e.data)};
+  rec.onstop=()=>{
+    pendingBlob=new Blob(recChunks,{type:rec.mimeType||'audio/webm'});
+    recStream.getTracks().forEach(t=>t.stop());
+  };
+  rec.start(250);
+  return true;
+}
+function stopRec(){stopWebSpeech();try{rec&&rec.state!=='inactive'&&rec.stop()}catch{}}
+
+talk.addEventListener('pointerdown',async e=>{
+  const ok=await startRec();
+  if(!ok)return;
   talk.setPointerCapture(e.pointerId);
   talk.classList.add('holding');
   talk.textContent='松开 结束';
@@ -1601,19 +1715,199 @@ function release(auto){
   recTip.classList.remove('show');
   const cancelled=willCancel;
   willCancel=false;
-  if(cancelled){flash('已取消');return}
-  // 松手即存 → 进入生成卡片界面（转写异步，UI 不等待）
+  stopRec();
+  if(cancelled){pendingBlob=null;flash('已取消');return}
+  // 松手即存 → 立刻进入生成卡片界面（转写在界面里异步进行，用户不用等）
   flash(auto?'已到 60s，自动记下 ✎':'已记下 ✎ 转写中…');
-  setTimeout(()=>openGenerated(),420);
+  setTimeout(()=>openGenerated(),380);
 }
 talk.addEventListener('pointerup',()=>release(false));
 talk.addEventListener('pointercancel',()=>release(false));
 
-/* ---------- 松手后：生成卡片界面 ---------- */
-function openGenerated(){
-  // 新录入的一条（原型用最新一条演示），进入便签详情＝生成卡片
-  const n=[...HISTORY].sort((a,b)=>b.date.localeCompare(a.date))[0];
-  openNote(`${n.date}|${n.time}`,'capture');
+/* ================= 真实管线：录音/上传 → ASR → LLM → 生成卡片 ================= */
+
+/* API 基址：GitHub Pages 上指向 Vercel 代理，本地/同源则留空 */
+const API_BASE=(()=>{
+  const q=new URLSearchParams(location.search).get('api');
+  if(q)return q;
+  return location.hostname.endsWith('github.io')?'https://aha-prototype.vercel.app':'';
+})();
+
+/* --- 音频工具：解码 → 降采样 16kHz 单声道 → MP3(24kbps) --- */
+function downsampleTo16k(buf){
+  const src=buf.getChannelData(0);
+  const ch=buf.numberOfChannels;
+  // 多声道取平均
+  let mono=src;
+  if(ch>1){
+    mono=new Float32Array(src.length);
+    for(let c=0;c<ch;c++){
+      const d=buf.getChannelData(c);
+      for(let i=0;i<src.length;i++)mono[i]+=d[i]/ch;
+    }
+  }
+  if(buf.sampleRate===16000)return mono;
+  const ratio=buf.sampleRate/16000;
+  const outLen=Math.floor(mono.length/ratio);
+  const out=new Float32Array(outLen);
+  for(let i=0;i<outLen;i++){
+    const p=i*ratio, i0=Math.floor(p), i1=Math.min(i0+1,mono.length-1), f=p-i0;
+    out[i]=mono[i0]*(1-f)+mono[i1]*f;
+  }
+  return out;
+}
+function floatTo16(input){
+  const out=new Int16Array(input.length);
+  for(let i=0;i<input.length;i++){
+    const s=Math.max(-1,Math.min(1,input[i]));
+    out[i]=s<0?s*0x8000:s*0x7FFF;
+  }
+  return out;
+}
+function encodeMp3(i16){
+  if(typeof lamejs==='undefined')throw new Error('MP3 编码器未加载');
+  const enc=new lamejs.Mp3Encoder(1,16000,24);   // 24kbps：2 分钟 ≈ 360KB，base64 后仍低于 600KB 上限
+  const CHUNK=1152,parts=[];
+  for(let i=0;i<i16.length;i+=CHUNK){
+    const buf=i16.subarray(i,i+CHUNK);
+    const mp3=enc.encodeBuffer(buf);
+    if(mp3.length)parts.push(mp3);
+  }
+  const end=enc.flush();
+  if(end.length)parts.push(end);
+  const bytes=new Uint8Array(parts.reduce((s,p)=>s+p.length,0));
+  let o=0;for(const p of parts){bytes.set(p,o);o+=p.length}
+  return bytes;
+}
+function toBase64(u8){
+  let s='';const CH=0x8000;
+  for(let i=0;i<u8.length;i+=CH)s+=String.fromCharCode.apply(null,u8.subarray(i,i+CH));
+  return btoa(s);
+}
+/* 从 PCM 算 34 根波形柱（真实音频特征） */
+function waveBars(mono,bars=34){
+  const step=Math.floor(mono.length/bars)||1;
+  const out=[];
+  for(let i=0;i<bars;i++){
+    let peak=0;
+    for(let j=0;j<step;j++)peak=Math.max(peak,Math.abs(mono[i*step+j]||0));
+    out.push(Math.min(100,Math.round(peak*160)+14));
+  }
+  return out;
+}
+async function audioBlobToPayload(blob){
+  const AC=window.AudioContext||window.webkitAudioContext;
+  const ac=new AC();
+  const buf=await ac.decodeAudioData(await blob.arrayBuffer());
+  const mono=downsampleTo16k(buf);
+  const mp3=encodeMp3(floatTo16(mono));
+  ac.close?.();
+  return {base64:toBase64(mp3),duration:buf.duration,bars:waveBars(mono),size:mp3.length};
+}
+function fmtDur(sec){
+  const s=Math.max(0,Math.round(sec));
+  return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+}
+
+/* --- 调后端 --- */
+async function api(path,body){
+  const r=await fetch(API_BASE+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const j=await r.json().catch(()=>({error:'网络异常'}));
+  if(j.error)throw new Error(j.error);
+  return j;
+}
+
+/* --- 生成一条便签并入库 --- */
+function makeNote({raw,gen,duration,bars,audioUrl,img}){
+  const now=new Date();
+  const date=isoDate(now);
+  const time=`今天 ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  let group=gen?.tag||'生活灵感';
+  let isNew=!!gen?.tagIsNew;
+  if(!GROUPS[group]){
+    // LLM 提议的新标签：临时入库，呈虚线待确认态
+    const palette=[{bg:'#6192FC',light:false},{bg:'#C7EF66',light:true},{bg:'#A9C0EE',light:true},{bg:'#11358B',light:false}];
+    const p=palette[Object.keys(GROUPS).length%palette.length];
+    GROUPS[group]={icon:'✦',bg:p.bg,light:p.light,accent:'#11358B'};
+    isNew=true;
+  }
+  const note={
+    date,time,group,type:'tag',
+    t:gen?.oneLiner||(img?'图片随记':(raw&&raw!=='(转写待补)'?raw.slice(0,24):'语音便签 · 转写待补')),
+    dur:duration?fmtDur(duration):'—',
+    tagState:isNew?'suggested':'confirmed',
+    raw:raw||'',
+    seg:(gen?.segments||[]).filter(Boolean).map(s=>({s:String(s).slice(0,20)})),
+    kw:gen?.keywords||[],
+    audioUrl:audioUrl||null,
+    bars:bars||null,
+    img:img||null,
+  };
+  if(!note.seg.length)note.seg=[{s:'（暂无摘要）'}];
+  HISTORY.unshift(note);
+  CARDS.unshift({
+    key:`${date}|${time}`,title:note.t,
+    text:note.raw.slice(0,60)||note.t,
+    img:note.img||null,
+    time:'刚刚',tag:'# '+note.group,
+    rot:Math.round((Math.random()*8-4)*10)/10,
+    ring:GROUPS[note.group].bg,
+  });
+  cur=0;buildCarousel();layout();
+  renderProjects();renderDay(date);
+  return note;
+}
+
+/* --- 主流程：音频 → ASR → LLM → 卡片 --- */
+async function processAudio(blob,{maxSec=125}={}){
+  const p=await audioBlobToPayload(blob);
+  if(p.duration>maxSec)throw new Error(`音频 ${fmtDur(p.duration)}，超过 2 分钟`);
+  const audioUrl=URL.createObjectURL(blob);
+  let raw='';
+  try{
+    const a=await api('/api/asr',{data:p.base64,format:'mp3'});
+    raw=a.text||'';
+  }catch(e){
+    console.warn('ASR 失败：',e.message);
+    raw='';
+  }
+  if(!raw&&wsRaw)raw=wsRaw;      // 兜底：用浏览器识别结果
+  if(!raw)return makeNote({raw:'(转写待补)',gen:null,duration:p.duration,bars:p.bars,audioUrl});
+  let gen=null;
+  try{
+    gen=await api('/api/llm',{transcript:raw,tags:Object.keys(GROUPS)});
+  }catch(e){
+    console.warn('LLM 失败：',e.message);
+  }
+  return makeNote({raw,gen,duration:p.duration,bars:p.bars,audioUrl});
+}
+
+/* --- 图片上传（V1 不做 OCR，图片只作情绪载体） --- */
+function readAsDataURL(file){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=rej;fr.readAsDataURL(file)})}
+
+/* 处理中的状态浮层 */
+function setBusy(on,msg){
+  const b=document.getElementById('busyBar');
+  if(!b)return;
+  b.hidden=!on;
+  if(on)b.querySelector('span').textContent=msg;
+}
+
+/* 松手后：真实生成（录音结束已把 blob 存到 pendingBlob） */
+let pendingBlob=null;
+async function openGenerated(){
+  if(!pendingBlob){flash('没有可处理的音频');return}
+  const blob=pendingBlob;pendingBlob=null;
+  setBusy(true,'转写并生成卡片…');
+  try{
+    const note=await processAudio(blob,{maxSec:125});
+    openNote(`${note.date}|${note.time}`,'capture');
+    flash('卡片已生成 ✓');
+  }catch(e){
+    flash(e.message||'生成失败');
+  }finally{
+    setBusy(false);
+  }
 }
 
 /* ---------- 上传录音 / 图片：上拉面板 ---------- */
@@ -1630,17 +1924,28 @@ document.getElementById('upImage').addEventListener('click',()=>{
 document.getElementById('upAudio').addEventListener('click',()=>{
   closeSheet();document.getElementById('audioPick').click();
 });
-document.getElementById('filePick').addEventListener('change',e=>{
-  if(!e.target.files.length)return;
-  flash('图片已上传，正在识别…');
-  setTimeout(()=>openGenerated(),900);
-  e.target.value='';
+document.getElementById('filePick').addEventListener('change',async e=>{
+  const f=e.target.files[0];e.target.value='';
+  if(!f)return;
+  setBusy(true,'生成图片卡片…');
+  try{
+    const dataUrl=await readAsDataURL(f);
+    const note=makeNote({raw:'（图片记录，无语音）',gen:{oneLiner:'一张图片',segments:['图片记录'],keywords:['图片'],tag:'生活灵感',tagIsNew:false},img:dataUrl});
+    openNote(`${note.date}|${note.time}`,'capture');
+    flash('图片卡片已生成 ✓');
+  }catch(err){flash(err.message||'生成失败')}
+  finally{setBusy(false)}
 });
-document.getElementById('audioPick').addEventListener('change',e=>{
-  if(!e.target.files.length)return;
-  flash('录音已上传，转写中…');
-  setTimeout(()=>openGenerated(),900);
-  e.target.value='';
+document.getElementById('audioPick').addEventListener('change',async e=>{
+  const f=e.target.files[0];e.target.value='';
+  if(!f)return;
+  setBusy(true,'转写并生成卡片…');
+  try{
+    const note=await processAudio(f,{maxSec:125});
+    openNote(`${note.date}|${note.time}`,'capture');
+    flash('卡片已生成 ✓');
+  }catch(err){flash(err.message||'生成失败')}
+  finally{setBusy(false)}
 });
 </script>
 </body>
