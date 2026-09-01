@@ -1009,10 +1009,10 @@
 /* ---------- 数据 ---------- */
 /* 卡片正文 = 原始 ASR 转录（未整理口语），与详情页「看原文」一致 */
 const CARDS=[
-  {key:'2026-08-29|昨天 11:31',title:'整理一份 AI 名词备选库，收集 20 个近期热门词条',
+  {key:'2026-08-31|昨天 11:31',title:'整理一份 AI 名词备选库，收集 20 个近期热门词条',
    text:'嗯 就是提前先搜集一批 就现在热度比较高的那些 AI 的专业词汇 大概二十个吧 然后每一个都配一句 就是通俗一点的解释 存成一个素材库 这样后面每天要推送的时候 就不用临时再去找内容了',
    time:'昨天 11:31',tag:'✓ Todo',tagCls:'todo',rot:-5,ring:'#DFF6A4'},
-  {key:'2026-08-30|今天 09:12',title:'帮我点一杯最近的瑞幸咖啡，要自取 ☕',
+  {key:'2026-09-01|今天 09:12',title:'帮我点一杯最近的瑞幸咖啡，要自取 ☕',
    img:'assets/card-cafe-real.png',
    time:'今天 09:12',tag:'# 生活',rot:4,ring:'#AEC7FD'},
   {key:'2026-08-27|周四 16:40',title:'做一个 AI 生成包豪斯风格住宅的 agent',
@@ -1025,13 +1025,13 @@ const CARDS=[
 /* raw = 原始 ASR 转录文本（未整理的连续口语，含赘词/重复/自我修正，原音的索引）
    seg = 分章节摘要（≤15字，严格按原文长度切，不凑数不扩充） */
 const HISTORY=[
-  {date:'2026-08-30',time:'今天 09:12',group:'生活灵感',type:'tag',t:'帮我点一杯最近的瑞幸咖啡，要自取',
+  {date:'2026-09-01',time:'今天 09:12',group:'生活灵感',type:'tag',t:'帮我点一杯最近的瑞幸咖啡，要自取',
    dur:'0:07',tagState:'confirmed',
    raw:'那个 帮我点一杯瑞幸 就最近的那家 自取 不用送',
    seg:[{s:'点最近门店的咖啡'},{s:'要自取不要外送'}],
    kw:['瑞幸','自取','就近门店']},
 
-  {date:'2026-08-29',time:'昨天 11:31',group:'待办事项',type:'tag',t:'整理一份 AI 名词备选库，收集 20 个近期热门词条',
+  {date:'2026-08-31',time:'昨天 11:31',group:'待办事项',type:'tag',t:'整理一份 AI 名词备选库，收集 20 个近期热门词条',
    dur:'0:24',tagState:'confirmed',
    raw:'嗯 就是提前先搜集一批 就现在热度比较高的那些 AI 的专业词汇 大概二十个吧 然后每一个都配一句 就是通俗一点的解释 存成一个素材库 这样后面每天要推送的时候 就不用临时再去找内容了 应该能省不少准备的时间',
    seg:[{s:'搜集热门AI专业词汇'},{s:'每个词配通俗解释'},{s:'存成素材库备用'},{s:'避免每天临时找内容'}],
@@ -1218,11 +1218,19 @@ const dayTitle=document.getElementById('dayTitle');
 const dayCount=document.getElementById('dayCount');
 const dayNoteList=document.getElementById('dayNoteList');
 const WEEK_NAMES=['周一','周二','周三','周四','周五','周六','周日'];
-const TODAY=isoDate(new Date());          // 真实今天
+/* 统一按北京时间取「今天」，不依赖本机时区 */
+function bjNow(){
+  const parts=Object.fromEntries(
+    new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'})
+    .formatToParts(new Date()).map(p=>[p.type,p.value]));
+  return {date:`${parts.year}-${parts.month}-${parts.day}`,time:`${parts.hour}:${parts.minute}`};
+}
+function bjToday(){return bjNow().date}
+const TODAY=bjToday();                    // 北京时间今天
 const BASE_WEEK=TODAY;                    // "本周" 以今天为基准
 let selectedDate=TODAY;
 let weekAnchor=parseISO(selectedDate);
-let calMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);  // 日历当前月
+let calMonth=(()=>{const [y,m]=TODAY.split('-').map(Number);return new Date(y,m-1,1)})();
 
 function parseISO(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d,12)}
 function isoDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
@@ -1314,15 +1322,17 @@ function shiftWeek(step){
 let weekStartX=0,weekDragging=false,weekDidSwipe=false;
 weekPanel.addEventListener('pointerdown',e=>{
   if(e.target.closest('.calendar-btn'))return;
-  weekDragging=true;weekDidSwipe=false;weekStartX=e.clientX;weekPanel.setPointerCapture(e.pointerId);
+  weekDragging=true;weekDidSwipe=false;weekStartX=e.clientX;
+  // 注意：不要在这里 setPointerCapture——它会把 pointerup 重定向到面板，
+  // 导致日期按钮的 click 序列断裂、点选失效。改为把 up 挂在 window 上兜底。
 });
-weekPanel.addEventListener('pointerup',e=>{
+window.addEventListener('pointerup',e=>{
   if(!weekDragging)return;weekDragging=false;
   const dx=e.clientX-weekStartX;
   if(Math.abs(dx)>38){
     weekDidSwipe=true;
     shiftWeek(dx<0?1:-1);
-    setTimeout(()=>weekDidSwipe=false,0);
+    setTimeout(()=>weekDidSwipe=false,60);
   }
 });
 weekPanel.addEventListener('pointercancel',()=>{weekDragging=false;weekDidSwipe=false});
@@ -1819,9 +1829,9 @@ async function api(path,body){
 
 /* --- 生成一条便签并入库 --- */
 function makeNote({raw,gen,duration,bars,audioUrl,img}){
-  const now=new Date();
-  const date=isoDate(now);
-  const time=`今天 ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const bj=bjNow();
+  const date=bj.date;
+  const time=`今天 ${bj.time}`;
   let group=gen?.tag||'生活灵感';
   let isNew=!!gen?.tagIsNew;
   if(!GROUPS[group]){
