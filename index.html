@@ -563,7 +563,7 @@
   .kw-list span:nth-child(3n+2){background:var(--lime);color:var(--ink)}
   .kw-list span:nth-child(3n+3){background:rgba(97,146,252,.17)}
 
-  /* 底部操作：导出图（自传播）/ 刻录成回忆（V2 入口） */
+  /* 底部操作：分享（自传播引擎） */
   .note-ops{display:flex;gap:8px;margin-top:19px;animation:riseIn .4s ease both .32s}
   .op-btn{
     flex:1;height:42px;border:none;border-radius:14px;cursor:pointer;
@@ -1579,7 +1579,7 @@ talk.addEventListener('pointerdown',e=>{
   // 计时：40s 长录提示 → 55s 变色倒计时 → 60s 自动结束并保存（绝不丢弃）
   recTimer=setInterval(()=>{
     recSec++;
-    if(recSec===40){recTip.textContent='这段挺长，之后可做成回忆卡片';recTip.classList.add('show')}
+    if(recSec===40){recTip.textContent='这段挺长，记完可以生成分享卡片';recTip.classList.add('show')}
     if(recSec>=55){talk.classList.add('near-limit');talk.textContent=`${60-recSec}s 后自动保存`}
     if(recSec>=60){release(true)}
   },1000);
