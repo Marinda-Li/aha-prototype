@@ -696,6 +696,7 @@
     background:var(--paper);
   }
   .kbd{
+    position:relative;
     flex:0 0 auto;
     width:50px;height:50px;border-radius:50%;
     background:#fff;
@@ -703,11 +704,31 @@
     cursor:pointer;
     display:flex;align-items:center;justify-content:center;
     box-shadow:0 5px 14px rgba(17,53,139,.14), 0 2px 4px rgba(17,53,139,.08);
-    transition:transform .15s, box-shadow .15s;
+    transition:transform .15s, box-shadow .15s, background .15s;
   }
+  .kbd:hover{background:var(--lime);transform:translateY(-2px)}
   .kbd:active{transform:translateY(2px);box-shadow:0 2px 6px rgba(17,53,139,.14)}
-  .kbd svg{width:23px;height:23px;stroke:var(--ink)}
+  .kbd svg{width:24px;height:24px;stroke:var(--ink)}
   .kbd[hidden]{display:none}
+  /* hover 小气泡提示 */
+  .kbd::after{
+    content:attr(data-tip);
+    position:absolute;left:50%;bottom:calc(100% + 10px);
+    transform:translateX(-50%) translateY(4px);
+    white-space:nowrap;
+    background:rgba(20,22,28,.9);color:#fff;
+    font-size:9.5px;font-weight:600;letter-spacing:.3px;
+    padding:6px 11px;border-radius:9px;
+    opacity:0;pointer-events:none;transition:.18s;
+    box-shadow:0 6px 14px rgba(17,53,139,.2);
+  }
+  .kbd::before{
+    content:"";position:absolute;left:50%;bottom:calc(100% + 5px);
+    transform:translateX(-50%) translateY(4px);
+    border:5px solid transparent;border-top-color:rgba(20,22,28,.9);
+    opacity:0;pointer-events:none;transition:.18s;
+  }
+  .kbd:hover::after,.kbd:hover::before{opacity:1;transform:translateX(-50%) translateY(0)}
   .talk{
     flex:1;height:56px;
     border-radius:999px;
@@ -793,6 +814,15 @@
   .talk.to-cancel::before,.talk.to-cancel::after{border-color:#e4574c}
   .talk.near-limit{background:#f0a63c;color:#fff;border-color:#d18b26;letter-spacing:1px}
   .talk.near-limit::before,.talk.near-limit::after{border-color:#f0a63c}
+  /* 点击模式常驻录音：深蓝底 + 左侧脉动红点 */
+  .talk.toggle-on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .talk.toggle-on::before,.talk.toggle-on::after{border-color:var(--navy)}
+  .talk.toggle-on .rec-dot{
+    display:inline-block;width:8px;height:8px;border-radius:50%;
+    background:#ff5f52;margin-right:8px;vertical-align:middle;
+    animation:recPulse 1s ease-in-out infinite;
+  }
+  @keyframes recPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.72)}}
 </style>
 </head>
 <body>
@@ -962,12 +992,12 @@
 
   <!-- 底部操作栏：仅“记住灵感”显示 -->
   <footer class="dock" id="dock">
-    <button class="kbd" id="kbd" aria-label="上传录音或图片">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 16V4M12 4 7.5 8.5M12 4l4.5 4.5M4 15v3a2.5 2.5 0 0 0 2.5 2.5h11A2.5 2.5 0 0 0 20 18v-3"/>
+    <button class="kbd" id="kbd" aria-label="上传录音或图片" data-tip="上传录音 / 图片">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+        <path d="M12 5.5v13M5.5 12h13"/>
       </svg>
     </button>
-    <button class="talk" id="talk">按住说话</button>
+    <button class="talk" id="talk">按住说话 / 点击录音</button>
   </footer>
 
   <!-- 上传录音/图片：上拉选项面板 -->
@@ -1696,47 +1726,114 @@ async function startRec(){
 }
 function stopRec(){stopWebSpeech();try{rec&&rec.state!=='inactive'&&rec.stop()}catch{}}
 
-talk.addEventListener('pointerdown',async e=>{
-  const ok=await startRec();
-  if(!ok)return;
-  talk.setPointerCapture(e.pointerId);
-  talk.classList.add('holding');
-  talk.textContent='松开 结束';
-  startY=e.clientY;willCancel=false;recSec=0;
-  cancelZone.classList.add('show');
-  // 计时：40s 长录提示 → 55s 变色倒计时 → 60s 自动结束并保存（绝不丢弃）
+/* ================= 录音交互：长按说话 + 点击切换（双模式） =================
+   兼容点：
+   1) getUserMedia 是异步的，必须在 pointerdown 同步帧内先 setPointerCapture，
+      否则 await 返回时 pointer 事件已结束、捕获失效 → 按钮"自动弹开"（App 端主要 bug）
+   2) 网页端用户习惯点一下开始、再点一下结束 → 用按下时长区分：
+      <220ms 且没移动 = 点击模式（进入常驻录音，再点结束）
+      >=220ms 或有拖动 = 长按模式（松手即结束）                            */
+let recMode=null;         // null | 'hold' | 'toggle'
+let pressT=0,recording=false;
+
+function setTalkText(t,dot){
+  talk.innerHTML=dot?`<span class="rec-dot"></span>${t}`:t;
+}
+function startTimers(){
+  recSec=0;
+  clearInterval(recTimer);
   recTimer=setInterval(()=>{
     recSec++;
     if(recSec===40){recTip.textContent='这段挺长，记完可以生成分享卡片';recTip.classList.add('show')}
-    if(recSec>=55){talk.classList.add('near-limit');talk.textContent=`${60-recSec}s 后自动保存`}
-    if(recSec>=60){release(true)}
+    if(recSec>=55){
+      talk.classList.add('near-limit');
+      setTalkText(`${60-recSec}s 后自动保存`);
+    }
+    if(recSec>=60)finishRec(true);
   },1000);
-});
-talk.addEventListener('pointermove',e=>{
-  if(!talk.classList.contains('holding'))return;
-  willCancel=(startY-e.clientY)>54;      // 上滑超过阈值进入取消区
-  cancelZone.classList.toggle('armed',willCancel);
-  talk.classList.toggle('to-cancel',willCancel);
-  if(!willCancel&&recSec<55)talk.textContent='松开 结束';
-  if(willCancel)talk.textContent='松开 取消';
-});
-function release(auto){
-  if(!talk.classList.contains('holding'))return;
-  clearInterval(recTimer);clearTimeout(tip40);
-  talk.classList.remove('holding','to-cancel','near-limit');
-  talk.textContent='按住说话';
+}
+function enterRecordingUI(mode){
+  recording=true;recMode=mode;
+  talk.classList.add('holding');
+  if(mode==='hold'){
+    cancelZone.classList.add('show');
+    setTalkText('松开 结束');
+  }else{
+    talk.classList.add('toggle-on');
+    setTalkText('录音中 · 点击结束',true);
+  }
+  startTimers();
+}
+function exitRecordingUI(){
+  recording=false;recMode=null;
+  clearInterval(recTimer);
+  talk.classList.remove('holding','to-cancel','near-limit','toggle-on');
+  setTalkText('按住说话 / 点击录音');
   cancelZone.classList.remove('show','armed');
   recTip.classList.remove('show');
+}
+/* 结束录音并进入生成流程 */
+function finishRec(auto){
+  if(!recording)return;
   const cancelled=willCancel;
   willCancel=false;
+  exitRecordingUI();
   stopRec();
   if(cancelled){pendingBlob=null;flash('已取消');return}
-  // 松手即存 → 立刻进入生成卡片界面（转写在界面里异步进行，用户不用等）
   flash(auto?'已到 60s，自动记下 ✎':'已记下 ✎ 转写中…');
   setTimeout(()=>openGenerated(),380);
 }
-talk.addEventListener('pointerup',()=>release(false));
-talk.addEventListener('pointercancel',()=>release(false));
+function release(auto){finishRec(auto)}   // 兼容旧调用
+
+let pendingMode=null;     // 录音就绪后要进入的模式
+talk.addEventListener('pointerdown',e=>{
+  e.preventDefault();
+  if(recording)return;                    // 已在录音（含 toggle 常驻）→ 交给 pointerup 处理
+  try{talk.setPointerCapture(e.pointerId)}catch{}
+  pressT=Date.now();startY=e.clientY;willCancel=false;
+  pendingMode='hold';                     // 默认按长按走，pointerup 里按时长改判
+  setTalkText('准备中…');
+  startRec().then(ok=>{
+    if(!ok){pendingMode=null;exitRecordingUI();return}
+    if(pendingMode===null)return;          // 已被抬起并取消
+    enterRecordingUI(pendingMode);
+    pendingMode=null;
+  });
+});
+talk.addEventListener('pointermove',e=>{
+  if(!recording||recMode!=='hold')return;
+  willCancel=(startY-e.clientY)>54;      // 上滑超过阈值进入取消区
+  cancelZone.classList.toggle('armed',willCancel);
+  talk.classList.toggle('to-cancel',willCancel);
+  if(!willCancel&&recSec<55)setTalkText('松开 结束');
+  if(willCancel)setTalkText('松开 取消');
+});
+talk.addEventListener('pointerup',e=>{
+  try{talk.releasePointerCapture(e.pointerId)}catch{}
+  const quick=Date.now()-pressT<220;
+  // 已在 toggle 常驻录音 → 本次抬起即结束
+  if(recording&&recMode==='toggle'){finishRec(false);return}
+  if(quick&&!willCancel){
+    // 快速点击 → 切/进入常驻录音，等下一次点击结束
+    if(recording){
+      recMode='toggle';
+      talk.classList.remove('to-cancel');
+      talk.classList.add('toggle-on');
+      cancelZone.classList.remove('show','armed');
+      setTalkText('录音中 · 点击结束',true);
+    }else{
+      pendingMode='toggle';               // 录音还没就绪，就绪后直接进 toggle
+    }
+    return;
+  }
+  if(!recording){pendingMode=null;exitRecordingUI();return}   // 长按但录音未就绪 → 放弃
+  finishRec(false);
+});
+talk.addEventListener('pointercancel',()=>{
+  if(recMode==='toggle'||pendingMode==='toggle')return;   // 点击模式不因 cancel 结束
+  pendingMode=null;
+  finishRec(false);
+});
 
 /* ================= 真实管线：录音/上传 → ASR → LLM → 生成卡片 ================= */
 
