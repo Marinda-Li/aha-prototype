@@ -201,6 +201,10 @@
   .play:hover{transform:scale(1.1)}
   .play:active{transform:scale(.92)}
   .play svg{width:12px;height:12px;fill:#fff;margin-left:1.5px}
+  /* 轮播卡播放态：按钮变荧光绿 + 内部 svg 暂停图标 */
+  .c-card.playing .play{background:var(--lime)}
+  .c-card.playing .play svg{fill:var(--ink)}
+  .c-card.playing .play svg .play-pause{display:inline}
 
   /* 轮播提示点 */
   .dots{
@@ -1107,7 +1111,7 @@
         <path d="M12 5.5v13M5.5 12h13"/>
       </svg>
     </button>
-    <button class="talk" id="talk">按住说话 / 点击录音</button>
+    <button class="talk" id="talk">按住说话</button>
   </footer>
 
   <!-- 上传录音/图片：上拉选项面板 -->
@@ -1332,29 +1336,64 @@ carousel.addEventListener('pointerdown',e=>{
   if(e.target.closest('.play'))return;
   drag=true;sx=e.clientX;off=0;
   carousel.classList.add('dragging');
-  carousel.setPointerCapture(e.pointerId);
+  // ★不要 setPointerCapture，否则 pointerup 被重定向、卡片 click 序列断裂
 });
-carousel.addEventListener('pointermove',e=>{
+window.addEventListener('pointermove',e=>{
   if(!drag)return;
-  off=(e.clientX-sx)/STEP;      // 向右拖 → 看左边卡片
+  off=(e.clientX-sx)/STEP;
   layout(-off);
 });
 function endDrag(){
   if(!drag)return;drag=false;
   carousel.classList.remove('dragging');
   const steps=Math.round(off);
-  cur-=steps;                   // 连续索引，天然循环
+  cur-=steps;
   layout();
 }
-carousel.addEventListener('pointerup',endDrag);
-carousel.addEventListener('pointercancel',endDrag);
+window.addEventListener('pointerup',endDrag);
+window.addEventListener('pointercancel',endDrag);
+
+/* 首页轮播卡片播放状态：每张独立 Audio 实例 */
+const cardAudios=new Map();          // key → Audio
+function toggleCardPlay(key,el){
+  // 找到对应 note，看有没有原音
+  const [d,t]=key.split('|');
+  const note=HISTORY.find(n=>n.date===d&&n.time===t);
+  if(!note||!note.audioUrl){flash('这条还没有原音');return}
+  if(cardAudios.has(key)){
+    const a=cardAudios.get(key);
+    a.pause();
+    cardAudios.delete(key);
+    el.classList.remove('playing');
+    return;
+  }
+  // 先停掉其它在播的
+  document.querySelectorAll('.c-card.playing').forEach(c=>c.classList.remove('playing'));
+  cardAudios.forEach(a=>a.pause());cardAudios.clear();
+  const a=new Audio(note.audioUrl);
+  a.onended=()=>{cardAudios.delete(key);el.classList.remove('playing')};
+  a.play().then(()=>{
+    el.classList.add('playing');
+    cardAudios.set(key,a);
+  }).catch(()=>flash('无法播放原音'));
+}
 /* 点中轴卡片 → 进入便签详情（拖拽后不触发） */
 function bindCards(){
-  cardEls.forEach((el,i)=>el.addEventListener('click',e=>{
-    if(e.target.closest('.play')||Math.abs(off)>.12)return;
+  cardEls.forEach((el,i)=>{
     const c=CARDS[i];
-    openNote(c.key,'capture');
-  }));
+    el.addEventListener('click',e=>{
+      if(e.target.closest('.play'))return;
+      if(Math.abs(off)>.12)return;
+      openNote(c.key,'capture');
+    });
+    const pb=el.querySelector('.play');
+    if(pb){
+      pb.addEventListener('click',e=>{
+        e.stopPropagation();
+        toggleCardPlay(c.key,el);
+      });
+    }
+  });
 }
 
 /* ---------- 顶部切换 ---------- */
@@ -2096,7 +2135,7 @@ function exitRecordingUI(){
   recording=false;recMode=null;
   clearInterval(recTimer);
   talk.classList.remove('holding','to-cancel','near-limit','toggle-on');
-  setTalkText('按住说话 / 点击录音');
+  setTalkText('按住说话');
   cancelZone.classList.remove('show','armed');
   recTip.classList.remove('show');
 }
