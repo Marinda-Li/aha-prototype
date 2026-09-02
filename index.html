@@ -222,33 +222,33 @@
   }
   .history::-webkit-scrollbar{display:none}
   .week-panel{
-    border-radius:17px;padding:10px 9px 9px;margin-bottom:12px;
+    border-radius:18px;padding:13px 12px 12px;margin-bottom:14px;
     background:rgba(255,255,255,.84);
     box-shadow:0 8px 22px rgba(17,53,139,.10),inset 0 1px 0 rgba(255,255,255,.95);
     touch-action:pan-y;user-select:none;
   }
-  .week-top{display:flex;align-items:center;padding:0 3px 8px 4px}
+  .week-top{display:flex;align-items:center;padding:0 2px 10px 3px}
   .week-caption{flex:1;min-width:0}
-  .week-caption strong{display:block;font-size:11px;line-height:1.1;color:var(--ink);letter-spacing:.5px}
-  .week-caption span{display:block;margin-top:3px;font-size:8.5px;color:var(--sub);letter-spacing:.25px}
-  .week-strip{display:grid;grid-template-columns:minmax(0,1fr) 29px;gap:5px;align-items:center}
+  .week-caption strong{display:block;font-size:13px;line-height:1.15;color:var(--ink);letter-spacing:.5px}
+  .week-caption span{display:block;margin-top:4px;font-size:9.5px;color:var(--sub);letter-spacing:.25px}
+  .week-strip{display:grid;grid-template-columns:minmax(0,1fr) 34px;gap:7px;align-items:center}
   .calendar-btn{
-    width:29px;height:29px;border-radius:9px;
+    width:34px;height:34px;border-radius:11px;
     border:none;background:rgba(97,146,252,.14);color:var(--navy);
     display:grid;place-items:center;cursor:pointer;transition:.2s;
     align-self:center;
   }
   .calendar-btn:hover{background:rgba(97,146,252,.24);transform:translateY(-1px)}
-  .calendar-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-  .week-days{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;min-width:0}
+  .calendar-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .week-days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;min-width:0}
   .week-day{
-    position:relative;border:none;border-radius:11px;background:transparent;
-    min-width:0;padding:5px 1px 6px;cursor:pointer;color:var(--sub);
+    position:relative;border:none;border-radius:12px;background:transparent;
+    min-width:0;padding:7px 1px 8px;cursor:pointer;color:var(--sub);
     transition:transform .2s,background .2s,color .2s,box-shadow .2s;
   }
   .week-day:hover{background:rgba(97,146,252,.09)}
-  .week-day .wd{display:block;font-size:8px;line-height:1;margin-bottom:5px}
-  .week-day .dn{display:block;font-size:11px;line-height:1;font-weight:800;color:var(--ink)}
+  .week-day .wd{display:block;font-size:9.5px;line-height:1;margin-bottom:6px}
+  .week-day .dn{display:block;font-size:13.5px;line-height:1;font-weight:800;color:var(--ink)}
   .week-day.has-note::after{content:"";position:absolute;left:50%;bottom:2px;width:3px;height:3px;border-radius:50%;background:var(--lime);transform:translateX(-50%)}
   .week-day.selected{
     color:#fff;background:var(--navy);transform:translateY(-1px);
@@ -261,31 +261,31 @@
   @keyframes weekLeft{50%{transform:translateX(-8px);opacity:.65}}
   @keyframes weekRight{50%{transform:translateX(8px);opacity:.65}}
 
-  .day-section{margin-bottom:14px}
-  .section-label{display:flex;align-items:baseline;gap:7px;padding:0 3px 8px}
-  .section-label b{font-size:12px;color:var(--ink);font-weight:900}
-  .section-label span{font-size:9px;color:var(--sub)}
-  .day-note-list{display:grid;gap:7px}
+  .day-section{margin-bottom:16px}
+  .section-label{display:flex;align-items:baseline;gap:8px;padding:0 3px 10px}
+  .section-label b{font-size:13.5px;color:var(--ink);font-weight:900}
+  .section-label span{font-size:10px;color:var(--sub)}
+  .day-note-list{display:grid;gap:9px}
   .day-note{
     position:relative;display:block;width:100%;text-align:left;border:none;cursor:pointer;
-    border-radius:15px;padding:10px 38px 10px 13px;
+    border-radius:17px;padding:15px 38px 15px 17px;
     background:rgba(255,255,255,.84);
     box-shadow:0 7px 16px rgba(17,53,139,.09),inset 0 1px 0 #fff;
     animation:noteIn .35s ease both;
   }
   @keyframes noteIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-  .day-note::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:4px;border-radius:0 5px 5px 0;background:var(--accent)}
-  .day-note b{display:block;font-size:11px;line-height:1.4;color:var(--ink);font-weight:700}
-  .day-note span{display:block;margin-top:4px;font-size:8.5px;color:var(--sub)}
-  .day-note .note-arrow{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:15px;color:rgba(17,53,139,.36)}
+  .day-note::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 5px 5px 0;background:var(--accent)}
+  .day-note b{display:block;font-size:13px;line-height:1.45;color:var(--ink);font-weight:800}
+  .day-note span{display:block;margin-top:6px;font-size:9.5px;color:var(--sub)}
+  .day-note .note-arrow{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:16px;color:rgba(17,53,139,.36)}
   .day-empty{
-    border-radius:15px;padding:14px;text-align:center;font-size:10px;color:var(--sub);
+    border-radius:17px;padding:17px;text-align:center;font-size:11px;color:var(--sub);
     background:rgba(255,255,255,.48);box-shadow:inset 0 1px 0 rgba(255,255,255,.8)
   }
 
-  .projects-head{display:flex;align-items:baseline;gap:7px;padding:2px 3px 9px}
-  .projects-head b{font-size:12px;color:var(--ink);font-weight:900}
-  .projects-head span{font-size:9px;color:var(--sub)}
+  .projects-head{display:flex;align-items:baseline;gap:8px;padding:2px 3px 10px}
+  .projects-head b{font-size:13.5px;color:var(--ink);font-weight:900}
+  .projects-head span{font-size:10px;color:var(--sub)}
   .history-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start;padding:0 2px 10px}
   .history-col{display:grid;gap:12px}
   /* 项目卡：纯色块 + 右侧边缘凹口 + 右下角内凹缺口（参考图形态） */
@@ -321,6 +321,20 @@
     white-space:nowrap;
   }
   .archive-group.light .group-count{background:rgba(20,22,28,.09);color:var(--ink)}
+  /* 有收藏时日期徽标左移，让出右上角 */
+  .archive-group:has(.group-fav) .group-count{right:42px}
+  /* 收藏角标（右上角，红心） */
+  .group-fav{
+    position:absolute;right:9px;top:9px;z-index:4;
+    min-width:26px;height:26px;padding:0 6px;border-radius:9px;
+    background:#ff5f52;color:#fff;
+    display:flex;align-items:center;justify-content:center;gap:2px;
+    font-size:11px;line-height:1;
+    box-shadow:0 4px 10px rgba(228,87,76,.42);
+    animation:favPop .34s cubic-bezier(.2,1.5,.4,1) both;
+  }
+  .group-fav b{font-size:9px;font-weight:900}
+  @keyframes favPop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
   /* 右侧凹口里的箭头 */
   .project-open{
     position:absolute;right:2px;top:70px;z-index:4;
@@ -382,9 +396,19 @@
     box-shadow:0 5px 12px rgba(17,53,139,.10);transition:.18s;
   }
   .back-btn:hover{transform:translateX(-2px);background:#fff}
-  .detail-title{min-width:0}
+  .detail-title{min-width:0;flex:1}
   .detail-title b{display:block;font-size:14px;font-weight:900;color:var(--ink);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .detail-title span{display:block;margin-top:2px;font-size:9px;color:var(--sub)}
+  /* 顶栏删除按钮 */
+  .top-del{
+    position:relative;flex:0 0 auto;
+    width:30px;height:30px;border-radius:10px;border:none;cursor:pointer;
+    background:rgba(255,255,255,.86);color:#b4433a;
+    display:grid;place-items:center;
+    box-shadow:0 5px 12px rgba(17,53,139,.10);transition:.18s;
+  }
+  .top-del:hover{background:#e4574c;color:#fff;transform:translateY(-2px)}
+  .top-del svg{width:16px;height:16px}
   .detail-scroll{
     flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;
     padding:2px 18px 26px;scrollbar-width:none;
@@ -392,18 +416,31 @@
   .detail-scroll::-webkit-scrollbar{display:none}
 
   /* 项目详情：便签列表 */
-  .project-notes{display:grid;gap:8px}
+  .project-notes{display:grid;gap:9px}
   .p-note{
     position:relative;display:block;width:100%;text-align:left;border:none;cursor:pointer;
-    border-radius:16px;padding:11px 34px 11px 14px;
+    border-radius:17px;padding:15px 38px 15px 17px;
     background:rgba(255,255,255,.88);
     box-shadow:0 7px 16px rgba(17,53,139,.09),inset 0 1px 0 #fff;
     animation:noteIn .34s ease both;
+    -webkit-user-select:none;user-select:none;touch-action:pan-y;
+    transition:transform .18s,box-shadow .18s,opacity .18s;
   }
-  .p-note::before{content:"";position:absolute;left:0;top:11px;bottom:11px;width:4px;border-radius:0 5px 5px 0;background:var(--accent)}
-  .p-note b{display:block;font-size:11.5px;line-height:1.4;color:var(--ink);font-weight:700}
-  .p-note span{display:block;margin-top:4px;font-size:8.5px;color:var(--sub)}
-  .p-note i{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-style:normal;font-size:15px;color:rgba(17,53,139,.34)}
+  .p-note::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 5px 5px 0;background:var(--accent)}
+  .p-note b{display:block;font-size:13px;line-height:1.45;color:var(--ink);font-weight:800}
+  .p-note span{display:block;margin-top:6px;font-size:9.5px;color:var(--sub)}
+  .p-note i{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-style:normal;font-size:16px;color:rgba(17,53,139,.34)}
+  /* 置顶标记 */
+  .p-note .pin{
+    right:auto;left:auto;position:static;display:inline-flex;align-items:center;
+    margin-right:5px;font-size:9px;font-weight:900;color:var(--navy);
+    background:var(--lime);border-radius:5px;padding:2px 5px;transform:none;
+  }
+  /* 拖拽中 */
+  .p-note.dragging{opacity:.45;transform:scale(.98);box-shadow:0 14px 26px rgba(17,53,139,.18);z-index:5}
+  .p-note.drop-above{box-shadow:0 -3px 0 0 var(--navy),0 7px 16px rgba(17,53,139,.09)}
+  .p-note.drop-below{box-shadow:0 3px 0 0 var(--navy),0 7px 16px rgba(17,53,139,.09)}
+  .p-note.long-pressing{transform:scale(.97)}
 
   /* 便签详情：展开动效 */
   @keyframes expandIn{
@@ -449,6 +486,8 @@
   .hero-act.a1{right:63px}
   .hero-act.a2{right:19px}
   .hero-act.on{background:var(--navy);color:#fff}
+  /* 分享按钮内的 svg 视觉重量对齐收藏的 ♡ 字符 */
+  .hero-act svg{width:15px;height:15px;stroke-width:1.9}
   /* 一句话标题 */
   .note-hero h3{
     position:absolute;left:17px;right:17px;top:72px;z-index:2;
@@ -766,6 +805,72 @@
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+  /* ===== 便签操作菜单（长按/右键） ===== */
+  .ctx-mask{position:absolute;inset:0;z-index:64;background:transparent;display:none}
+  .ctx-mask.show{display:block}
+  .ctx-menu{
+    position:absolute;z-index:65;min-width:132px;
+    padding:6px;border-radius:15px;
+    background:rgba(255,255,255,.98);
+    box-shadow:0 14px 34px rgba(17,53,139,.24),inset 0 1px 0 #fff;
+    opacity:0;pointer-events:none;transform:scale(.9);
+    transform-origin:top left;transition:.16s cubic-bezier(.2,.9,.3,1);
+  }
+  .ctx-menu.show{opacity:1;pointer-events:auto;transform:scale(1)}
+  .ctx-item{
+    display:flex;align-items:center;gap:9px;width:100%;
+    border:none;background:none;cursor:pointer;
+    padding:9px 11px;border-radius:11px;
+    font-family:inherit;font-size:12px;font-weight:700;color:var(--ink);
+    transition:background .14s;
+  }
+  .ctx-item:hover{background:rgba(97,146,252,.13)}
+  .ctx-item.danger{color:#c8433a}
+  .ctx-item.danger:hover{background:rgba(228,87,76,.12)}
+  .ctx-item .ci{font-size:13px;width:16px;text-align:center}
+  .ctx-item i{font-style:normal}
+
+  /* ===== 确认弹窗 ===== */
+  .dlg-mask{
+    position:absolute;inset:0;z-index:74;background:rgba(17,25,48,.34);
+    opacity:0;pointer-events:none;transition:.2s;
+  }
+  .dlg-mask.show{opacity:1;pointer-events:auto}
+  .dlg{
+    position:absolute;left:50%;top:50%;z-index:75;
+    width:min(268px,84%);
+    transform:translate(-50%,-50%) scale(.9);
+    padding:20px 18px 16px;border-radius:22px;
+    background:#fff;text-align:center;
+    box-shadow:0 22px 48px rgba(17,53,139,.28);
+    opacity:0;pointer-events:none;transition:.22s cubic-bezier(.2,.9,.3,1);
+  }
+  .dlg.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+  .dlg-title{font-size:14px;font-weight:900;color:var(--ink)}
+  .dlg-desc{margin-top:7px;font-size:10.5px;line-height:1.6;color:var(--sub)}
+  .dlg-acts{display:flex;gap:8px;margin-top:17px}
+  .dlg-btn{
+    flex:1;height:42px;border:none;border-radius:13px;cursor:pointer;
+    background:rgba(17,53,139,.07);color:var(--ink);
+    font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.4px;transition:.16s;
+  }
+  .dlg-btn:hover{background:rgba(17,53,139,.13)}
+  .dlg-btn.danger{background:#e4574c;color:#fff}
+  .dlg-btn.danger:hover{background:#cf4137}
+
+  /* 无有效声音气泡（居中，比 toast 更醒目） */
+  .voice-bubble{
+    position:absolute;left:50%;bottom:112px;transform:translateX(-50%) translateY(14px) scale(.94);
+    z-index:60;display:flex;align-items:center;gap:8px;
+    padding:12px 18px;border-radius:999px;
+    background:#fff;color:var(--ink);
+    font-size:11.5px;font-weight:700;letter-spacing:.3px;white-space:nowrap;
+    box-shadow:0 12px 28px rgba(17,53,139,.22),inset 0 1px 0 #fff;
+    opacity:0;pointer-events:none;transition:.26s cubic-bezier(.2,.9,.3,1);
+  }
+  .voice-bubble.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+  .voice-bubble .vb-ico{font-style:normal;font-size:14px}
+
   /* 处理中状态条（转写/生成卡片时） */
   .busy-bar{
     position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
@@ -910,6 +1015,11 @@
       <div class="detail-top">
         <button class="back-btn" id="noteBack" aria-label="返回">‹</button>
         <div class="detail-title"><b id="noteCrumb">便利贴</b><span id="noteMeta"></span></div>
+        <button class="top-del" id="noteDelete" aria-label="删除这条便利贴" data-tip="删除">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 7h16M9.5 7V4.8h5V7M6.5 7l.9 12.2a1.8 1.8 0 0 0 1.8 1.7h5.6a1.8 1.8 0 0 0 1.8-1.7L17.5 7M10.2 11v6M13.8 11v6"/>
+          </svg>
+        </button>
       </div>
       <div class="detail-scroll" id="noteScroll">
         <article class="note-hero" id="noteHero">
@@ -1022,6 +1132,29 @@
   <!-- 隐藏的文件选择器 -->
   <input type="file" id="filePick" accept="image/*" hidden>
   <input type="file" id="audioPick" accept="audio/*" hidden>
+
+  <!-- 便签操作菜单（长按 / 右键） -->
+  <div class="ctx-mask" id="ctxMask"></div>
+  <div class="ctx-menu" id="ctxMenu">
+    <button class="ctx-item" data-act="pin"><span class="ci">↑</span><i id="ctxPinTxt">置顶</i></button>
+    <button class="ctx-item danger" data-act="del"><span class="ci">🗑</span><i>删除</i></button>
+  </div>
+
+  <!-- 删除确认弹窗 -->
+  <div class="dlg-mask" id="dlgMask"></div>
+  <div class="dlg" id="dlgConfirm">
+    <div class="dlg-title">删除这条便利贴？</div>
+    <div class="dlg-desc" id="dlgDesc">删除后无法恢复，原音也会一起清除。</div>
+    <div class="dlg-acts">
+      <button class="dlg-btn" id="dlgCancel">取消</button>
+      <button class="dlg-btn danger" id="dlgOk">删除</button>
+    </div>
+  </div>
+
+  <!-- 无有效声音提示气泡 -->
+  <div class="voice-bubble" id="voiceBubble">
+    <i class="vb-ico">🎤</i><span>暂未识别到有效声音哦～</span>
+  </div>
 
   <!-- 处理中状态条 -->
   <div class="busy-bar" id="busyBar" hidden>
@@ -1284,8 +1417,10 @@ function groupCard(name,items,index){
     'V58 C172 71, 149 67, 149 80 C149 93, 172 89, 172 102 '+   // 右侧凹口
     'V136 C172 170, 150 194, 116 194 '+                         // 右下大圆角缺口
     'H22 A22 22 0 0 1 0 172 V22 A22 22 0 0 1 22 0 Z';
+  const favCount=items.filter(x=>x.fav).length;      // 该分组内收藏数
   return `<section class="archive-group ${g.light?'light':''}" data-group="${gi}" style="--group-bg:${g.bg};--accent:${g.accent};animation-delay:${index*55}ms">
     <svg class="group-shape" viewBox="0 0 172 194" preserveAspectRatio="none" shape-rendering="geometricPrecision"><path d="${shape}" fill="${g.bg}"/></svg>
+    ${favCount?`<span class="group-fav" title="${favCount} 条已收藏">♥${favCount>1?`<b>${favCount}</b>`:''}</span>`:''}
     <span class="group-count">${badge}</span>
     <i class="project-open">↗</i>
     <i class="project-pen">✎</i>
@@ -1430,19 +1565,203 @@ function flash(msg){
   clearTimeout(window.__flashT);
   window.__flashT=setTimeout(()=>{t.classList.remove('show');t.textContent='已记下 ✎'},1600);
 }
+/* 居中气泡提示（用于"没听到声音"这类需要用户注意的反馈） */
+function bubble(msg){
+  const b=document.getElementById('voiceBubble');
+  b.querySelector('span').textContent=msg;
+  b.classList.add('show');
+  clearTimeout(window.__bubbleT);
+  window.__bubbleT=setTimeout(()=>b.classList.remove('show'),2200);
+}
+let curProject=null;
+function projectRows(name){
+  // 排序：置顶优先 → 手动顺序(ord) → 日期倒序
+  return HISTORY.filter(x=>x.group===name).sort((a,b)=>
+    (b.pin?1:0)-(a.pin?1:0) ||
+    (a.ord??1e9)-(b.ord??1e9) ||
+    b.date.localeCompare(a.date));
+}
 function openProject(name){
-  const g=GROUPS[name];
-  const rows=HISTORY.filter(x=>x.group===name).sort((a,b)=>b.date.localeCompare(a.date));
-  document.getElementById('projectName').textContent=name;
-  document.getElementById('projectMeta').textContent=`${rows.length} 条便利贴 · 最近 ${rows[0].time}`;
-  projectNotes.innerHTML=rows.map((n,i)=>
-    `<button class="p-note" data-key="${n.date}|${n.time}" style="--accent:${g.accent};animation-delay:${i*40}ms">
-      <b>${n.t}</b><span>${n.time} · ${n.seg.length} 段 · ${n.dur}</span><i>›</i></button>`).join('');
-  projectNotes.querySelectorAll('.p-note').forEach(el=>{
-    el.addEventListener('click',()=>openNote(el.dataset.key,'project',name));
-  });
+  curProject=name;
+  renderProjectNotes();
   showView('project');
 }
+function renderProjectNotes(){
+  const name=curProject,g=GROUPS[name];
+  const rows=projectRows(name);
+  document.getElementById('projectName').textContent=name;
+  document.getElementById('projectMeta').textContent=`${rows.length} 条便利贴 · 最近 ${rows[0]?rows[0].time:'—'}`;
+  projectNotes.innerHTML=rows.map((n,i)=>
+    `<button class="p-note" draggable="true" data-key="${n.date}|${n.time}" style="--accent:${g.accent};animation-delay:${i*38}ms">
+      <b>${n.pin?'<span class="pin">置顶</span>':''}${n.t}</b>
+      <span>${n.time} · ${n.seg.length} 段 · ${n.dur}${n.fav?' · ♥ 已收藏':''}</span>
+      <i>›</i></button>`).join('');
+  bindProjectNotes();
+}
+function findNote(key){
+  const [date,time]=key.split('|');
+  return HISTORY.find(x=>x.date===date&&x.time===time);
+}
+function bindProjectNotes(){
+  const els=[...projectNotes.querySelectorAll('.p-note')];
+  els.forEach(el=>{
+    let lpTimer=null,moved=false,sx=0,sy=0;
+    // 点击进入详情（长按/拖拽后不触发）
+    el.addEventListener('click',e=>{
+      if(el.dataset.suppressClick){delete el.dataset.suppressClick;return}
+      openNote(el.dataset.key,'project',curProject);
+    });
+    // 长按（手机）
+    el.addEventListener('pointerdown',e=>{
+      if(e.pointerType==='mouse'&&e.button!==0)return;
+      moved=false;sx=e.clientX;sy=e.clientY;
+      lpTimer=setTimeout(()=>{
+        lpTimer=null;
+        el.classList.remove('long-pressing');
+        el.dataset.suppressClick='1';
+        openCtxMenu(el,e.clientX,e.clientY);
+      },480);
+      el.classList.add('long-pressing');
+    });
+    el.addEventListener('pointermove',e=>{
+      if(Math.abs(e.clientX-sx)>8||Math.abs(e.clientY-sy)>8){
+        moved=true;clearTimeout(lpTimer);lpTimer=null;el.classList.remove('long-pressing');
+      }
+    });
+    const endPress=()=>{clearTimeout(lpTimer);lpTimer=null;el.classList.remove('long-pressing')};
+    el.addEventListener('pointerup',endPress);
+    el.addEventListener('pointercancel',endPress);
+    el.addEventListener('pointerleave',endPress);
+    // 右键（桌面）
+    el.addEventListener('contextmenu',e=>{
+      e.preventDefault();
+      openCtxMenu(el,e.clientX,e.clientY);
+    });
+    // 拖拽排序
+    el.addEventListener('dragstart',e=>{
+      dragKey=el.dataset.key;
+      el.classList.add('dragging');
+      e.dataTransfer.effectAllowed='move';
+      try{e.dataTransfer.setData('text/plain',dragKey)}catch{}
+    });
+    el.addEventListener('dragend',()=>{
+      el.classList.remove('dragging');
+      els.forEach(x=>x.classList.remove('drop-above','drop-below'));
+      dragKey=null;
+    });
+    el.addEventListener('dragover',e=>{
+      if(!dragKey||el.dataset.key===dragKey)return;
+      e.preventDefault();
+      const r=el.getBoundingClientRect();
+      const below=e.clientY>r.top+r.height/2;
+      els.forEach(x=>x.classList.remove('drop-above','drop-below'));
+      el.classList.add(below?'drop-below':'drop-above');
+    });
+    el.addEventListener('dragleave',()=>el.classList.remove('drop-above','drop-below'));
+    el.addEventListener('drop',e=>{
+      e.preventDefault();
+      if(!dragKey||el.dataset.key===dragKey)return;
+      const r=el.getBoundingClientRect();
+      const below=e.clientY>r.top+r.height/2;
+      reorderNotes(dragKey,el.dataset.key,below);
+    });
+  });
+}
+/* 拖拽后重排：把 dragKey 插到 targetKey 前/后，并把顺序固化到 ord */
+let dragKey=null;
+function reorderNotes(fromKey,toKey,after){
+  const rows=projectRows(curProject);
+  const from=rows.findIndex(n=>`${n.date}|${n.time}`===fromKey);
+  let to=rows.findIndex(n=>`${n.date}|${n.time}`===toKey);
+  if(from<0||to<0)return;
+  const [moving]=rows.splice(from,1);
+  if(from<to)to--;
+  rows.splice(after?to+1:to,0,moving);
+  rows.forEach((n,i)=>{n.ord=i});
+  // 拖拽即视为手动排序，清掉置顶以免与手动顺序冲突
+  if(moving.pin&&rows[0]!==moving)moving.pin=false;
+  renderProjectNotes();
+  flash('顺序已调整');
+}
+
+/* ---------- 便签操作菜单 ---------- */
+const ctxMenu=document.getElementById('ctxMenu');
+const ctxMask=document.getElementById('ctxMask');
+let ctxKey=null;
+function openCtxMenu(el,x,y){
+  ctxKey=el.dataset.key;
+  const n=findNote(ctxKey);
+  document.getElementById('ctxPinTxt').textContent=n&&n.pin?'取消置顶':'置顶';
+  const phone=document.querySelector('.phone').getBoundingClientRect();
+  ctxMenu.classList.add('show');ctxMask.classList.add('show');
+  const mw=ctxMenu.offsetWidth,mh=ctxMenu.offsetHeight;
+  let left=x-phone.left,top=y-phone.top;
+  left=Math.min(Math.max(8,left),phone.width-mw-8);
+  top=Math.min(Math.max(8,top),phone.height-mh-8);
+  ctxMenu.style.left=left+'px';
+  ctxMenu.style.top=top+'px';
+}
+function closeCtxMenu(){ctxMenu.classList.remove('show');ctxMask.classList.remove('show')}
+ctxMask.addEventListener('click',closeCtxMenu);
+ctxMenu.querySelectorAll('.ctx-item').forEach(b=>b.addEventListener('click',()=>{
+  const act=b.dataset.act,key=ctxKey;
+  closeCtxMenu();
+  if(!key)return;
+  if(act==='pin'){
+    const n=findNote(key);
+    if(!n)return;
+    n.pin=!n.pin;
+    if(n.pin){n.ord=-1;projectRows(curProject).forEach((x,i)=>{if(x!==n)x.ord=i})}
+    renderProjectNotes();
+    flash(n.pin?'已置顶 ↑':'已取消置顶');
+  }else if(act==='del'){
+    askDelete(key);
+  }
+}));
+
+/* ---------- 删除确认 ---------- */
+const dlg=document.getElementById('dlgConfirm');
+const dlgMask=document.getElementById('dlgMask');
+let delKey=null,delFrom=null;
+function askDelete(key,from){
+  delKey=key;delFrom=from||null;
+  const n=findNote(key);
+  document.getElementById('dlgDesc').textContent=
+    n?`「${n.t.slice(0,18)}${n.t.length>18?'…':''}」删除后无法恢复，原音也会一起清除。`
+     :'删除后无法恢复，原音也会一起清除。';
+  dlg.classList.add('show');dlgMask.classList.add('show');
+}
+function closeDlg(){dlg.classList.remove('show');dlgMask.classList.remove('show');delKey=null}
+dlgMask.addEventListener('click',closeDlg);
+document.getElementById('dlgCancel').addEventListener('click',closeDlg);
+document.getElementById('dlgOk').addEventListener('click',()=>{
+  const key=delKey,from=delFrom;
+  closeDlg();
+  if(!key)return;
+  deleteNote(key);
+  // 从详情页删除 → 回到来源页；从列表删除 → 留在列表
+  if(from==='note')showView(curProject?'project':'history');
+  flash('已删除');
+});
+function deleteNote(key){
+  const n=findNote(key);
+  if(!n)return;
+  if(n.audioUrl)URL.revokeObjectURL(n.audioUrl);
+  HISTORY.splice(HISTORY.indexOf(n),1);
+  const ci=CARDS.findIndex(c=>c.key===key);
+  if(ci>=0){CARDS.splice(ci,1);cur=0;buildCarousel();layout()}
+  renderProjects();
+  renderDay(selectedDate);
+  if(curProject&&!viewProject.hidden){
+    if(projectRows(curProject).length)renderProjectNotes();
+    else showView('history');          // 该项目空了 → 回列表
+  }
+}
+/* 详情页顶部删除按钮 */
+document.getElementById('noteDelete').addEventListener('click',()=>{
+  if(!curNote)return;
+  askDelete(`${curNote.date}|${curNote.time}`,'note');
+});
 function openNote(key,from,projectName){
   const [date,time]=key.split('|');
   const n=HISTORY.find(x=>x.date===date&&x.time===time);
@@ -1471,6 +1790,10 @@ function openNote(key,from,projectName){
   const heroImg=document.getElementById('heroImg');
   voiceBar.hidden=!!n.img;
   if(n.img){heroImg.src=n.img;heroImg.hidden=false}else{heroImg.hidden=true}
+  // 恢复收藏态
+  const fav=document.getElementById('heroFav');
+  fav.classList.toggle('on',!!n.fav);
+  fav.textContent=n.fav?'♥':'♡';
   renderSegs();
   renderTagRow();
   kwList.innerHTML=n.kw.map(k=>`<span>${k}</span>`).join('');
@@ -1524,8 +1847,13 @@ function renderSegs(){
 }
 segToggle.addEventListener('click',()=>{showRaw=!showRaw;renderSegs()});
 document.getElementById('heroFav').addEventListener('click',e=>{
-  e.currentTarget.classList.toggle('on');
-  e.currentTarget.textContent=e.currentTarget.classList.contains('on')?'♥':'♡';
+  if(!curNote)return;
+  curNote.fav=!curNote.fav;
+  const on=!!curNote.fav;
+  e.currentTarget.classList.toggle('on',on);
+  e.currentTarget.textContent=on?'♥':'♡';
+  renderProjects();                       // 同步项目卡角标
+  flash(on?'已收藏 ♥':'已取消收藏');
 });
 /* 真实播放：有原音就用 <audio>，没有就只跑动画 */
 let audioEl=null;
@@ -1913,7 +2241,19 @@ async function audioBlobToPayload(blob){
   const mono=downsampleTo16k(buf);
   const mp3=encodeMp3(floatTo16(mono));
   ac.close?.();
-  return {base64:toBase64(mp3),duration:buf.duration,bars:waveBars(mono),size:mp3.length};
+  return {base64:toBase64(mp3),duration:buf.duration,bars:waveBars(mono),size:mp3.length,rms:rmsOf(mono),peak:peakOf(mono)};
+}
+/* 静音判据：整体能量(RMS) + 峰值，用于拦截误触空录音 */
+function rmsOf(mono){
+  let s=0;const step=Math.max(1,Math.floor(mono.length/20000));
+  let n=0;
+  for(let i=0;i<mono.length;i+=step){s+=mono[i]*mono[i];n++}
+  return n?Math.sqrt(s/n):0;
+}
+function peakOf(mono){
+  let p=0;const step=Math.max(1,Math.floor(mono.length/20000));
+  for(let i=0;i<mono.length;i+=step)p=Math.max(p,Math.abs(mono[i]));
+  return p;
 }
 function fmtDur(sec){
   const s=Math.max(0,Math.round(sec));
@@ -1969,21 +2309,33 @@ function makeNote({raw,gen,duration,bars,audioUrl,img}){
   return note;
 }
 
+/* 无有效声音时抛出的专用错误 */
+class NoVoiceError extends Error{constructor(){super('暂未识别到有效声音哦～');this.noVoice=true}}
+
 /* --- 主流程：音频 → ASR → LLM → 卡片 --- */
-async function processAudio(blob,{maxSec=125}={}){
+async function processAudio(blob,{maxSec=125,strict=true}={}){
   const p=await audioBlobToPayload(blob);
   if(p.duration>maxSec)throw new Error(`音频 ${fmtDur(p.duration)}，超过 2 分钟`);
+  // ① 误触拦截：太短 或 近乎静音 → 不生成卡片
+  if(strict&&(p.duration<0.6||(p.rms<0.006&&p.peak<0.05)))throw new NoVoiceError();
   const audioUrl=URL.createObjectURL(blob);
   let raw='';
   try{
     const a=await api('/api/asr',{data:p.base64,format:'mp3'});
-    raw=a.text||'';
+    raw=(a.text||'').trim();
   }catch(e){
     console.warn('ASR 失败：',e.message);
     raw='';
   }
-  if(!raw&&wsRaw)raw=wsRaw;      // 兜底：用浏览器识别结果
-  if(!raw)return makeNote({raw:'(转写待补)',gen:null,duration:p.duration,bars:p.bars,audioUrl});
+  if(!raw&&wsRaw)raw=wsRaw.trim();      // 兜底：用浏览器识别结果
+  // ② 转写为空：区分「服务失败」与「真的没说话」
+  //    有明显人声能量 → 判为服务问题，保留卡片标「转写待补」；
+  //    能量本来就低 → 判为误触，不生成卡片。
+  if(!raw){
+    const hasVoice=p.rms>=0.012||p.peak>=0.12;
+    if(strict&&!hasVoice){URL.revokeObjectURL(audioUrl);throw new NoVoiceError()}
+    return makeNote({raw:'(转写待补)',gen:null,duration:p.duration,bars:p.bars,audioUrl});
+  }
   let gen=null;
   try{
     gen=await api('/api/llm',{transcript:raw,tags:Object.keys(GROUPS)});
@@ -2015,7 +2367,8 @@ async function openGenerated(){
     openNote(`${note.date}|${note.time}`,'capture');
     flash('卡片已生成 ✓');
   }catch(e){
-    flash(e.message||'生成失败');
+    if(e.noVoice)bubble('暂未识别到有效声音哦～');
+    else flash(e.message||'生成失败');
   }finally{
     setBusy(false);
   }
@@ -2055,7 +2408,10 @@ document.getElementById('audioPick').addEventListener('change',async e=>{
     const note=await processAudio(f,{maxSec:125});
     openNote(`${note.date}|${note.time}`,'capture');
     flash('卡片已生成 ✓');
-  }catch(err){flash(err.message||'生成失败')}
+  }catch(err){
+    if(err.noVoice)bubble('暂未识别到有效声音哦～');
+    else flash(err.message||'生成失败');
+  }
   finally{setBusy(false)}
 });
 </script>
